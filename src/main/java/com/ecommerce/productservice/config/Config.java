@@ -31,10 +31,10 @@ public class Config {
                         .url("https://github.com/Ecommerce-Application-Demo/ecommerce-backend"));
     }
 
-//    @Profile(value = "dev")
-//    @Scheduled(fixedDelay = 1000*60*5)
-//    void renderRunner() {
-//        RestTemplate restTemplate= new RestTemplate();
-//        restTemplate.getForEntity("https://ecommerce-backend-product-service.onrender.com/product/actuator/info",String.class);
-//    }
+    @Profile(value = "dev")
+    @Scheduled(fixedDelay = 1000*60*5)
+    void renderRunner() {
+        RestTemplate restTemplate= new RestTemplate();
+        restTemplate.getForEntity("https://ecommerce-backend-product-service.onrender.com/product/actuator/info",String.class);
+    }
 }
