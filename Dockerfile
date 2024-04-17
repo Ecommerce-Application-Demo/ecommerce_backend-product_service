@@ -2,10 +2,9 @@ FROM gradle:8.5-jdk21-alpine AS DEPS
 
 WORKDIR /app
 
-COPY /ProductService/ /app/ProductService
+COPY . /app
 
-WORKDIR /app/ProductService
-
+WORKDIR /app
 RUN gradle build -x test --no-daemon
 
 # Use the official OpenJDK base image for Java 21
@@ -15,7 +14,8 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Copy the jar to the container
-COPY --from=DEPS /app/ProductService/build/libs /app/build
+
+COPY --from=DEPS /app/build/libs /app/build
 
 # Expose the port that your Spring Boot application will run on
 EXPOSE 8520
