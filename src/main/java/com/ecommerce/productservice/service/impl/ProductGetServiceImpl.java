@@ -110,7 +110,11 @@ public class ProductGetServiceImpl implements ProductGetService {
     public List<SkuDto> getSku(String productId, String skuId, String size, String colour) {
 
         List<SkuDto> skuDto= skuRepo.findSKU(productId,skuId,size,colour).stream()
-                .map(sku -> modelMapper.map(sku,SkuDto.class)).toList();
+                .map(sku -> {
+                               SkuDto skuDto1= modelMapper.map(sku,SkuDto.class);
+                               skuDto1.setProductId(sku.getProduct().getProductId());
+                               return skuDto1;
+                }).toList();
         return skuDto;
     }
 }
