@@ -9,6 +9,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,17 +19,19 @@ import java.math.BigDecimal;
 public class Sku {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private String skuId;
-	private String size;
+	private String skuName;
 	private String colour;
 	private BigDecimal mrp;
 	private BigDecimal discountPercentage;
 	private BigDecimal finalPrice;
+	@ElementCollection
+	@CollectionTable(name = "size_variants")
+	private List<SizeVariantDetails> sizeVariantDetails = new ArrayList<>();
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(columnDefinition = "jsonb")
 	private Images images;
-	private Integer quantity;
-	private String availablePincodes;
 	@ManyToOne
 	@JoinColumn(name = "sku_product")
 	@JsonIgnore

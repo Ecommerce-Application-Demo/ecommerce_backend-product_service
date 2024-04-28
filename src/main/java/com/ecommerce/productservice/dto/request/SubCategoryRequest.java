@@ -15,6 +15,7 @@ public class SubCategoryRequest {
     private UUID subCategoryId;
     private String subCategoryName;
     private String subCategoryDescription;
+    private String subCategoryDefaultImage;
     private MasterCategoryDto masterCategoryDto;
     private CategoryDto categoryDto;
 }

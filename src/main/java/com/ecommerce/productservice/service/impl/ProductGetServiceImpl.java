@@ -2,14 +2,15 @@ package com.ecommerce.productservice.service.impl;
 
 import com.ecommerce.productservice.dto.*;
 import com.ecommerce.productservice.entity.ReviewRating;
+import com.ecommerce.productservice.entity.Sku;
 import com.ecommerce.productservice.repository.*;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -75,8 +76,8 @@ public class ProductGetServiceImpl implements ProductGetService {
     public List<ProductResponse> getProduct(String productId, String productName, String subCategoryName,
                                             String categoryName, String masterCategoryName, String brand, String gender) {
         List<ProductResponse> productDto;
-        if (masterCategoryName != null || subCategoryName != null || categoryName != null) {
-            productDto = productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName).stream()
+        if (masterCategoryName != null || subCategoryName != null || categoryName != null || brand != null || gender != null) {
+            productDto = productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName, brand, gender).stream()
                     .map(product -> {
                         product.setProductAvgRating(reviewRatingRepo.findAvgRating(product.getProductId()).toString());
                         product.setReviewCount(reviewRatingRepo.findCountByProductId(product.getProductId()).toString());
@@ -109,12 +110,45 @@ public class ProductGetServiceImpl implements ProductGetService {
     @Override
     public List<SkuDto> getSku(String productId, String skuId, String size, String colour) {
 
-        List<SkuDto> skuDto= skuRepo.findSKU(productId,skuId,size,colour).stream()
+        return skuRepo.findSKU(productId,skuId,size,colour).stream()
                 .map(sku -> {
+                                sku.setSizeVariantDetails(sku.getSizeVariantDetails().stream().toList());
                                SkuDto skuDto1= modelMapper.map(sku,SkuDto.class);
                                skuDto1.setProductId(sku.getProduct().getProductId());
                                return skuDto1;
                 }).toList();
-        return skuDto;
+    }
+
+    @Override
+    public Map<String,Integer> getSizes(String skuId){
+        Sku sku = skuRepo.findById(skuId).orElseGet(Sku::new);
+        Map<String,Integer> sizes = new HashMap<>();
+        if(!sku.getSizeVariantDetails().isEmpty()) {
+            sku.getSizeVariantDetails().forEach(sizeVariantDetails -> {
+                    sizes.put(sizeVariantDetails.getSize(), sizeVariantDetails.getQuantity());
+            });
+        }
+        return sizes;
+    }
+
+    @Override
+    public AvailableColours getColours(String productId){
+        List<Sku> skuList=skuRepo.findSKU(productId,null,null,null);
+        Map<String,String> inStockColours=new HashMap<>();
+        Map<String,String> outStockColours=new HashMap<>();
+        if(!skuList.isEmpty()){
+            skuList.forEach(sku -> {
+                AtomicBoolean flag= new AtomicBoolean(false);
+                getSizes(sku.getSkuId()).forEach((size, quantity) -> {
+                    if (quantity > 0)
+                        flag.set(true);
+                });
+                if(flag.get())
+                    inStockColours.put(sku.getColour(),sku.getImages().getDefaultImage());
+                else
+                    outStockColours.put(sku.getColour(),sku.getImages().getDefaultImage());
+            });
+        }
+        return new AvailableColours(inStockColours,outStockColours);
     }
 }

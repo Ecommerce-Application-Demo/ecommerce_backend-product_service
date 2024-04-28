@@ -20,6 +20,7 @@ public class Category {
 	private String categoryName;
 	@Column(length = 500)
 	private String categoryDescription;
+	private String categoryDefaultImage;
 	@ManyToOne
 	@JoinColumn(name = "category_master_category")
 	private MasterCategory masterCategory;

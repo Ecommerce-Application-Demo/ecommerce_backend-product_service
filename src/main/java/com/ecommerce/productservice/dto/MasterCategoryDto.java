@@ -13,4 +13,6 @@ public class MasterCategoryDto {
     private UUID masterCategoryId;
     private String masterCategoryName;
     private String mastercategoryDescription;
+    private String masterCategoryDefaultImage;
+
 }

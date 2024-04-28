@@ -20,6 +20,7 @@ public class SubCategory {
 	private String SubCategoryName;
 	@Column(length = 500)
 	private String SubCategoryDescription;
+	private String SubCategoryDefaultImage;
 	@ManyToOne
 	@JoinColumn(name = "sub_category_category")
 	private Category category;

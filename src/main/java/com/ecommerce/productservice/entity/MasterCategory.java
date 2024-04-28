@@ -19,6 +19,7 @@ public class MasterCategory {
 	private String masterCategoryName;
 	@Column(length = 500)
 	private String mastercategoryDescription;
+	private String masterCategoryDefaultImage;
 	@OneToMany(mappedBy = "masterCategory",cascade = CascadeType.ALL)
 	private List<Category> category;
 	@OneToMany(mappedBy = "masterCategory",cascade = CascadeType.ALL)

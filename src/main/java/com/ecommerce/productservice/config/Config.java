@@ -25,7 +25,7 @@ public class Config {
                 .info(new Info().title("Product Service")
                         .description("JAVA Backend API Documentation for Ecommerce Product Service")
                         .version("v0.1")
-                        .license(new License().name("MIT").url("https://opensource.org/license/mit")))
+                        .license(new License().name("MIT License").url("https://opensource.org/license/mit")))
                 .externalDocs(new ExternalDocumentation()
                         .description("Github")
                         .url("https://github.com/Ecommerce-Application-Demo/ecommerce-backend"));

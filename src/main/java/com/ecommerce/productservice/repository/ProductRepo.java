@@ -15,10 +15,14 @@ public interface ProductRepo extends CrudRepository<Product, UUID> {
             "LEFT JOIN product.sub_category sc ON p.product_sub_category = sc.sub_category_name " +
             "LEFT JOIN product.master_category mc ON (c.category_master_category = mc.master_category_name " +
             "OR sc.sub_category_master_category = mc.master_category_name) " +
+            "LEFT JOIN product.brand b ON p.product_brand = b.brand_name " +
             "WHERE (c.category_name = ?2 OR ?2 IS NULL) " +
             "AND (sc.sub_category_name = ?1 OR ?1 IS NULL) " +
-            "AND (mc.master_category_name = ?3 OR ?3 IS NULL)",nativeQuery = true)
-    List<Product> findProductByCategory(String subCategoryName, String categoryName, String masterCategoryName);
+            "AND (mc.master_category_name = ?3 OR ?3 IS NULL) "+
+            "AND (b.brand_name = ?4 OR ?4 IS NULL) " +
+            "AND (p.gender = ?5 OR ?5 IS NULL)",nativeQuery = true)
+    List<Product> findProductByCategory(String subCategoryName, String categoryName, String masterCategoryName,
+                                        String brandName, String gender);
 
     @Query(value = "SELECT * " +
             "FROM product.product " +

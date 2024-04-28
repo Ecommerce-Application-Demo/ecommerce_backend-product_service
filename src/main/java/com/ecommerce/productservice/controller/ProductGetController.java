@@ -9,13 +9,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -48,9 +51,9 @@ public class ProductGetController {
     })
     @GetMapping("/category")
     public ResponseEntity<List<CategoryDto>> getCategory(@RequestParam(required = false) String categoryId,
-                                                         @RequestParam(required = false) String CategoryName,
+                                                         @RequestParam(required = false) String categoryName,
                                                          @RequestParam(required = false) String masterCategoryName){
-        return new ResponseEntity<>(productService.getCategory(CategoryName,categoryId,masterCategoryName), HttpStatus.OK);
+        return new ResponseEntity<>(productService.getCategory(categoryName,categoryId,masterCategoryName), HttpStatus.OK);
     }
 
     @Operation(summary = "To get SubCategory")
@@ -84,7 +87,8 @@ public class ProductGetController {
                             schema = @Schema(implementation = ProductResponse.class)) }),
     })
     @GetMapping("/product")
-    public ResponseEntity<List<ProductResponse>> getProduct(@RequestParam(required = false) String productId,
+    public ResponseEntity<List<ProductResponse>> getProduct(
+                                                 @RequestParam(required = false) String productId,
                                                  @RequestParam(required = false) String productName,
                                                  @RequestParam(required = false) String subCategoryName,
                                                  @RequestParam(required = false) String categoryName,
@@ -120,5 +124,31 @@ public class ProductGetController {
                                                    @RequestParam(required = false) String size,
                                                    @RequestParam (required = false) String colour){
         return new ResponseEntity<>(productService.getSku(productId,skuId,size,colour), HttpStatus.OK);
+    }
+
+
+    @Operation(summary = "To get All Colour Variants of a Product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Various colour of product both in & out of stock",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AvailableColours.class)) }),
+    })
+    @GetMapping("/product/colours")
+    public ResponseEntity<AvailableColours> getSkuColours(@RequestParam String productId){
+        return new ResponseEntity<>(productService.getColours(productId), HttpStatus.OK);
+    }
+
+
+    @Operation(summary = "To get All available sizes of a Product's SKU")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Various sizes of product both in & out of stock",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(type = "Integer", additionalProperties = Schema.AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION,
+                            example = "{ L : 30 }")) }),
+
+    })
+    @GetMapping("sku/sizes")
+    public ResponseEntity<Map<String,Integer>> getSkuSize(@RequestParam String skuId){
+        return new ResponseEntity<>(productService.getSizes(skuId), HttpStatus.OK);
     }
 }

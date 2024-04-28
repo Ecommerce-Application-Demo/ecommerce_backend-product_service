@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 public class Images implements Serializable {
-    private String image1;
+    private String defaultImage;
     private String image2;
     private String image3;
     private String image4;
