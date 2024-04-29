@@ -5,10 +5,10 @@ import com.ecommerce.productservice.entity.ReviewRating;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ProductGetService {
-  //  List<MasterCategoryDto> getAllMasterCategory();
 
     List<MasterCategoryDto> getMasterCategory(String masterCategoryId, String masterCategoryName);
 
@@ -24,4 +24,7 @@ public interface ProductGetService {
 
     List<SkuDto> getSku(String productId, String skuId, String size, String colour );
 
+    Map<String,Integer> getSizes(String skuId);
+
+    AvailableColours getColours(String productId);
 }
