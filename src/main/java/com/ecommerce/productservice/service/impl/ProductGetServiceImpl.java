@@ -1,6 +1,9 @@
 package com.ecommerce.productservice.service.impl;
 
 import com.ecommerce.productservice.dto.*;
+import com.ecommerce.productservice.dto.response.AvailableColours;
+import com.ecommerce.productservice.dto.response.ColourInfo;
+import com.ecommerce.productservice.dto.response.SizeInfo;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.Sku;
 import com.ecommerce.productservice.repository.*;
@@ -120,12 +123,12 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     @Override
-    public Map<String,Integer> getSizes(String skuId){
+    public List<SizeInfo> getSizes(String skuId){
         Sku sku = skuRepo.findById(skuId).orElseGet(Sku::new);
-        Map<String,Integer> sizes = new HashMap<>();
+        List<SizeInfo> sizes = new ArrayList<>() ;
         if(!sku.getSizeVariantDetails().isEmpty()) {
             sku.getSizeVariantDetails().forEach(sizeVariantDetails -> {
-                    sizes.put(sizeVariantDetails.getSize(), sizeVariantDetails.getQuantity());
+                    sizes.add(new SizeInfo(sizeVariantDetails.getSize(),sizeVariantDetails.getQuantity()));
             });
         }
         return sizes;
@@ -134,21 +137,27 @@ public class ProductGetServiceImpl implements ProductGetService {
     @Override
     public AvailableColours getColours(String productId){
         List<Sku> skuList=skuRepo.findSKU(productId,null,null,null);
-        Map<String,String> inStockColours=new HashMap<>();
-        Map<String,String> outStockColours=new HashMap<>();
+        List<ColourInfo> inStockColours = new ArrayList<>();
+        List<ColourInfo> outStockColours = new ArrayList<>();
         if(!skuList.isEmpty()){
             skuList.forEach(sku -> {
                 AtomicBoolean flag= new AtomicBoolean(false);
-                getSizes(sku.getSkuId()).forEach((size, quantity) -> {
-                    if (quantity > 0)
+                getSizes(sku.getSkuId()).forEach(size -> {
+                    if (size.quantity() > 0)
                         flag.set(true);
                 });
                 if(flag.get())
-                    inStockColours.put(sku.getColour(),sku.getImages().getDefaultImage());
+                    inStockColours.add(new ColourInfo(sku.getColour(),sku.getImages().getDefaultImage()));
                 else
-                    outStockColours.put(sku.getColour(),sku.getImages().getDefaultImage());
+                    inStockColours.add(new ColourInfo(sku.getColour(),sku.getImages().getDefaultImage()));
             });
         }
         return new AvailableColours(inStockColours,outStockColours);
+    }
+
+    @Override
+    public List<ProductResponse> getProductListing(String productId, String productName, String subCategoryName, String categoryName, String masterCategoryName, String brand, String gender) {
+
+        return List.of();
     }
 }

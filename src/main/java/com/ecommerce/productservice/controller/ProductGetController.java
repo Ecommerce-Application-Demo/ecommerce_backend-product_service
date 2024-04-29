@@ -1,24 +1,22 @@
 package com.ecommerce.productservice.controller;
 
 import com.ecommerce.productservice.dto.*;
+import com.ecommerce.productservice.dto.response.AvailableColours;
+import com.ecommerce.productservice.dto.response.SizeInfo;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -101,6 +99,27 @@ public class ProductGetController {
                                                      masterCategoryName,brand,gender), HttpStatus.OK);
     }
 
+    @Operation(summary = "To get Product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductResponse.class)) })
+    })
+   // @GetMapping("/product/listing")
+    public ResponseEntity<List<ProductResponse>> getProductListing(
+                                                @RequestParam(required = false) String productId,
+                                                @RequestParam(required = false) String productName,
+                                                @RequestParam(required = false) String subCategoryName,
+                                                @RequestParam(required = false) String categoryName,
+                                                @RequestParam(required = false) String masterCategoryName,
+                                                @RequestParam(required = false) String brand,
+                                                @RequestParam(required = false) String gender)
+    {
+
+        return new ResponseEntity<>(productService.getProductListing(productId,productName,subCategoryName,categoryName,
+                                                            masterCategoryName,brand,gender), HttpStatus.OK);
+    }
+
     @Operation(summary = "To get Review")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get all Review for a product",
@@ -143,12 +162,11 @@ public class ProductGetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Various sizes of product both in & out of stock",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(type = "Integer", additionalProperties = Schema.AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION,
-                            example = "{ L : 30 }")) }),
+                            schema = @Schema(implementation = SizeInfo.class))}),
 
     })
     @GetMapping("sku/sizes")
-    public ResponseEntity<Map<String,Integer>> getSkuSize(@RequestParam String skuId){
+    public ResponseEntity<List<SizeInfo>> getSkuSize(@RequestParam String skuId){
         return new ResponseEntity<>(productService.getSizes(skuId), HttpStatus.OK);
     }
 }
