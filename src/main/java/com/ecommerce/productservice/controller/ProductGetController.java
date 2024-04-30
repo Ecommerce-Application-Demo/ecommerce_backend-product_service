@@ -2,6 +2,8 @@ package com.ecommerce.productservice.controller;
 
 import com.ecommerce.productservice.dto.*;
 import com.ecommerce.productservice.dto.response.AvailableColours;
+import com.ecommerce.productservice.dto.response.ProductListingResponse;
+import com.ecommerce.productservice.dto.response.ProductResponse;
 import com.ecommerce.productservice.dto.response.SizeInfo;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
@@ -11,12 +13,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -26,8 +28,6 @@ public class ProductGetController {
 
     @Autowired
     ProductGetService productService;
-    @Autowired
-    Environment environment;
 
     @Operation(summary = "To get Master Category")
     @ApiResponses(value = {
@@ -78,9 +78,9 @@ public class ProductGetController {
         return new ResponseEntity<>(productService.getBrand(), HttpStatus.OK);
     }
 
-    @Operation(summary = "To get Product")
+    @Operation(summary = "To get Product along with all related details")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product",
+            @ApiResponse(responseCode = "200", description = "Product with All related details",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ProductResponse.class)) }),
     })
@@ -99,24 +99,21 @@ public class ProductGetController {
                                                      masterCategoryName,brand,gender), HttpStatus.OK);
     }
 
-    @Operation(summary = "To get Product")
+    @Operation(summary = "To get Product details for Product Listing Page")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product",
+            @ApiResponse(responseCode = "200", description = "Product with required info only",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ProductResponse.class)) })
+                            schema = @Schema(implementation = ProductListingResponse.class)) })
     })
-   // @GetMapping("/product/listing")
-    public ResponseEntity<List<ProductResponse>> getProductListing(
-                                                @RequestParam(required = false) String productId,
-                                                @RequestParam(required = false) String productName,
+    @GetMapping("/product/listing")
+    public ResponseEntity<Set<ProductListingResponse>> getProductListing(
                                                 @RequestParam(required = false) String subCategoryName,
                                                 @RequestParam(required = false) String categoryName,
                                                 @RequestParam(required = false) String masterCategoryName,
                                                 @RequestParam(required = false) String brand,
                                                 @RequestParam(required = false) String gender)
     {
-
-        return new ResponseEntity<>(productService.getProductListing(productId,productName,subCategoryName,categoryName,
+        return new ResponseEntity<>(productService.getProductListing(subCategoryName,categoryName,
                                                             masterCategoryName,brand,gender), HttpStatus.OK);
     }
 
