@@ -40,16 +40,19 @@ public class ProductHelperController {
         return new ResponseEntity<>(helperService.imageResizer(images, newHeight, newQuality, newWidth), HttpStatus.OK);
     }
 
-    @Operation(summary = "Returns number of days to deliver to specified Pincode")
+    @Operation(summary = "Returns the day for delivery for specified Pincode,if possible")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Days to deliver the specific Size of that product",
+            @ApiResponse(responseCode = "200", description = "Delivery date of the specific Size of that product, if possible",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class)) })
+                            schema = @Schema(implementation = String.class)) }),
+            @ApiResponse(responseCode = "200", description = "Product not available at your area",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))})
     })
     @GetMapping("/isDeliverable")
-    public ResponseEntity<String> pincode(@RequestParam String pincode,
+    public ResponseEntity<String> delivery(@RequestParam String pincode,
                                           @RequestParam String sizeId) {
-       return new ResponseEntity<>(helperService.getDistance(pincode,sizeId),HttpStatus.OK);
+       return new ResponseEntity<>(helperService.getDeliveryAvailability(pincode,sizeId),HttpStatus.OK);
     }
 
 

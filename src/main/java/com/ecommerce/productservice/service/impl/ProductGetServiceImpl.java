@@ -115,7 +115,7 @@ public class ProductGetServiceImpl implements ProductGetService {
         List<SizeInfo> sizes = new ArrayList<>() ;
         if(!sku.getSizeVariantDetails().isEmpty()) {
             sku.getSizeVariantDetails().forEach(sizeVariantDetails -> {
-                    sizes.add(new SizeInfo(sizeVariantDetails.getSize(),sizeVariantDetails.getQuantity()));
+                    sizes.add(new SizeInfo(sizeVariantDetails.getSkuSizeId(),sizeVariantDetails.getSize(),sizeVariantDetails.getQuantity()));
             });
         }
         return sizes;

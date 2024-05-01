@@ -6,5 +6,5 @@ public interface HelperService {
 
     Map<String,String> imageResizer(Map<String,String> image,int newHeight, int newQuality, int newWidth);
 
-    String getDistance(String pincode, String sizeId);
+    String getDeliveryAvailability(String pincode, String sizeId);
 }

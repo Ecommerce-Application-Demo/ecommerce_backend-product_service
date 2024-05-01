@@ -6,11 +6,10 @@ import com.ecommerce.productservice.repository.PincodeRepo;
 import com.ecommerce.productservice.repository.SkuRepo;
 import com.ecommerce.productservice.service.declaration.HelperService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
@@ -21,6 +20,11 @@ public class HelperServiceImpl implements HelperService {
     @Autowired
     SkuRepo skuRepo;
 
+    @Value("${AVAILABILITY_SUCCESS_MESSAGE}")
+    String AVAILABILITY_SUCCESS_MESSAGE;
+    @Value("${PRODUCT_NOT_AVAILABLE_MESSAGE}")
+    String PRODUCT_NOT_AVAILABLE_MESSAGE;
+
     private static final double EARTH_RADIUS_KM = 6371;
 
     @Override
@@ -28,39 +32,39 @@ public class HelperServiceImpl implements HelperService {
 
         Map<String, String> responseImages = new LinkedHashMap<>();
         image.forEach((key, value) -> {
-            if(value!=null)
+            if (value != null)
                 responseImages.put(key, modifyURL(value, newHeight, newQuality, newWidth));
         });
         return responseImages;
     }
 
     @Override
-    public String getDistance(String pincode,String sizeId) {
+    public String getDeliveryAvailability(String pincode, String sizeId) {
         SizeVariantDetails svd = skuRepo.findSize(sizeId).getSizeVariantDetails().getFirst();
         AtomicBoolean flag = new AtomicBoolean(false);
-        if(svd != null && svd.getQuantity()>0){
+        if (svd != null && svd.getQuantity() > 0) {
             List<String> codes = List.of(svd.getAvailablePincodes().split(","));
             codes.forEach(s -> {
                 if (pincode.startsWith(s))
                     flag.set(true);
-            } );
+            });
         }
-        if(flag.get()) {
-            PincodeDetails to = pincodeRepo.findById("700018").get();
-            PincodeDetails from = pincodeRepo.findById(pincode).get();
-            double distance = distance(to.getLatitude(), to.getLongitude(), from.getLatitude(), from.getLongitude());
-            return Integer.toString(Math.round((float) distance/300)+1);
-        }else {
-            return "Product not available at your pincode";
+        if (flag.get()) {
+            int timeToDeliver = Math.round(calculateDistance(pincode) / 300) + 1;
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DAY_OF_MONTH, timeToDeliver);
+            String response = AVAILABILITY_SUCCESS_MESSAGE +cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault())+ ", "
+                    + cal.get(Calendar.DAY_OF_MONTH) + "th " + cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
+            return response;
+        } else {
+            return PRODUCT_NOT_AVAILABLE_MESSAGE;
         }
-
     }
 
-    public void calculateDistance(String pincode){
+    public float calculateDistance(String pincode) {
         PincodeDetails to = pincodeRepo.findById("700018").get();
         PincodeDetails from = pincodeRepo.findById(pincode).get();
-        double dis = distance(to.getLatitude(), to.getLongitude(), from.getLatitude(), from.getLongitude());
-
+        return (float) distance(to.getLatitude(), to.getLongitude(), from.getLatitude(), from.getLongitude());
     }
 
     public static double degreesToRadians(double degrees) {
@@ -81,8 +85,8 @@ public class HelperServiceImpl implements HelperService {
                         Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance =Math.round(EARTH_RADIUS_KM * c);
-        return distance + distance*((double) 20 /100);
+        double distance = Math.round(EARTH_RADIUS_KM * c);
+        return distance + distance * ((double) 20 / 100);
     }
 
     public String modifyURL(String originalURL, int newHeight, int newQuality, int newWidth) {
