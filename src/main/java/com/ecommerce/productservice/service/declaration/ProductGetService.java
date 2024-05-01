@@ -1,10 +1,7 @@
 package com.ecommerce.productservice.service.declaration;
 
 import com.ecommerce.productservice.dto.*;
-import com.ecommerce.productservice.dto.response.AvailableColours;
-import com.ecommerce.productservice.dto.response.ProductListingResponse;
-import com.ecommerce.productservice.dto.response.ProductResponse;
-import com.ecommerce.productservice.dto.response.SizeInfo;
+import com.ecommerce.productservice.dto.response.*;
 import com.ecommerce.productservice.entity.ReviewRating;
 
 import java.util.List;
@@ -29,7 +26,7 @@ public interface ProductGetService {
 
     List<SizeInfo> getSizes(String skuId);
 
-    AvailableColours getColours(String productId);
+    Set<ColourInfo> getColours(String productId);
 
     Set<ProductListingResponse> getProductListing(String subCategoryName, String categoryName, String masterCategoryName, String brand, String gender);
 }

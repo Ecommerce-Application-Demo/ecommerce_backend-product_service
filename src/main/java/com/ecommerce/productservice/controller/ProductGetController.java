@@ -1,10 +1,7 @@
 package com.ecommerce.productservice.controller;
 
 import com.ecommerce.productservice.dto.*;
-import com.ecommerce.productservice.dto.response.AvailableColours;
-import com.ecommerce.productservice.dto.response.ProductListingResponse;
-import com.ecommerce.productservice.dto.response.ProductResponse;
-import com.ecommerce.productservice.dto.response.SizeInfo;
+import com.ecommerce.productservice.dto.response.*;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -147,10 +144,10 @@ public class ProductGetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Various colour of product both in & out of stock",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AvailableColours.class)) }),
+                            schema = @Schema(implementation = ColourInfo.class)) }),
     })
     @GetMapping("/product/colours")
-    public ResponseEntity<AvailableColours> getSkuColours(@RequestParam String productId){
+    public ResponseEntity<Set<ColourInfo>> getSkuColours(@RequestParam String productId){
         return new ResponseEntity<>(productService.getColours(productId), HttpStatus.OK);
     }
 

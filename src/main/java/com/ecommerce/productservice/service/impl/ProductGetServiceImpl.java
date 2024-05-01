@@ -122,10 +122,9 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     @Override
-    public AvailableColours getColours(String productId){
+    public Set<ColourInfo> getColours(String productId){
         List<Sku> skuList=skuRepo.findSKU(productId,null,null,null);
-        List<ColourInfo> inStockColours = new ArrayList<>();
-        List<ColourInfo> outStockColours = new ArrayList<>();
+        Set<ColourInfo> colourInfos=new HashSet<>();
         if(!skuList.isEmpty()){
             skuList.forEach(sku -> {
                 AtomicBoolean flag= new AtomicBoolean(false);
@@ -134,12 +133,12 @@ public class ProductGetServiceImpl implements ProductGetService {
                         flag.set(true);
                 });
                 if(flag.get())
-                    inStockColours.add(new ColourInfo(sku.getColour(),sku.getImages().getDefaultImage()));
+                    colourInfos.add(new ColourInfo(sku.getSkuId(),sku.getColour(),sku.getImages().getDefaultImage(),true));
                 else
-                    inStockColours.add(new ColourInfo(sku.getColour(),sku.getImages().getDefaultImage()));
+                    colourInfos.add(new ColourInfo(sku.getSkuId(),sku.getColour(),sku.getImages().getDefaultImage(),false));
             });
         }
-        return new AvailableColours(inStockColours,outStockColours);
+        return colourInfos;
     }
 
     @Override

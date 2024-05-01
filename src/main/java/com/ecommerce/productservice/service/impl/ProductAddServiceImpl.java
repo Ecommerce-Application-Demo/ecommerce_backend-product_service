@@ -95,6 +95,7 @@ public class ProductAddServiceImpl implements ProductAddService {
         Sku sku = modelMapper.map(skuDto, Sku.class);
         sku.setImages(skuDto.getImages());
         sku.setProduct(productRepo.findById(skuDto.getProductId()).get());
+        sku.getSizeVariantDetails().forEach(svd -> svd.setSkuSizeId(sku.getSkuId()+"_"+svd.getSize()));
         BigDecimal finalPrice = sku.getMrp().subtract(sku.getDiscountPercentage().multiply(sku.getMrp()).divide(new BigDecimal(100), MathContext.DECIMAL128));
         sku.setFinalPrice(finalPrice);
 
