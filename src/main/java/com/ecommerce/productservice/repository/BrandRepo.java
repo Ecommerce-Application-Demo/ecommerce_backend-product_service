@@ -1,9 +1,8 @@
 package com.ecommerce.productservice.repository;
 
-import org.springframework.data.repository.CrudRepository;
-
 import com.ecommerce.productservice.entity.Brand;
+import org.springframework.data.repository.ListCrudRepository;
 
-public interface BrandRepo extends CrudRepository<Brand, String> {
+public interface BrandRepo extends ListCrudRepository<Brand, String> {
 
 }

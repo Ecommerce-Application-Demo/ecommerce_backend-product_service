@@ -106,4 +106,9 @@ public class ProductAddController {
     public ResponseEntity<Sku> addProductSku(@RequestBody SkuRequest sku){
         return new ResponseEntity<>(productService.addSku(sku), HttpStatus.OK);
     }
+
+    @GetMapping("/index")
+    public String index(){
+        return "From ProductAddController";
+    }
 }

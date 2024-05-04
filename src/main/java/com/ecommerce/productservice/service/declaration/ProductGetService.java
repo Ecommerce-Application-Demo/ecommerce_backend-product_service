@@ -1,11 +1,11 @@
 package com.ecommerce.productservice.service.declaration;
 
 import com.ecommerce.productservice.dto.*;
+import com.ecommerce.productservice.dto.response.*;
 import com.ecommerce.productservice.entity.ReviewRating;
 
-
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public interface ProductGetService {
@@ -24,7 +24,9 @@ public interface ProductGetService {
 
     List<SkuDto> getSku(String productId, String skuId, String size, String colour );
 
-    Map<String,Integer> getSizes(String skuId);
+    List<SizeInfo> getSizes(String skuId);
 
-    AvailableColours getColours(String productId);
+    Set<ColourInfo> getColours(String productId);
+
+    Set<ProductListingResponse> getProductListing(String subCategoryName, String categoryName, String masterCategoryName, String brand, String gender);
 }

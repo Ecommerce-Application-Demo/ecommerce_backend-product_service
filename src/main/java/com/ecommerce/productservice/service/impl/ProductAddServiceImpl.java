@@ -79,7 +79,15 @@ public class ProductAddServiceImpl implements ProductAddService {
 
     @Override
     public ReviewRating addReview(ReviewRating reviewRating){
-        return reviewRatingRepo.save(reviewRating);
+        ReviewRating reviewRatingResponse=new ReviewRating();
+        Product product=productRepo.findById(reviewRating.getProductId()).orElse(null);
+        if( product != null) {
+            reviewRatingResponse = reviewRatingRepo.save(reviewRating);
+            product.setProductAvgRating(reviewRatingRepo.findAvgRating(product.getProductId()).toString());
+            product.setReviewCount(reviewRatingRepo.findCountByProductId(product.getProductId()).toString());
+            productRepo.save(product);
+        }
+        return reviewRatingResponse;
     }
 
     @Override
@@ -87,6 +95,7 @@ public class ProductAddServiceImpl implements ProductAddService {
         Sku sku = modelMapper.map(skuDto, Sku.class);
         sku.setImages(skuDto.getImages());
         sku.setProduct(productRepo.findById(skuDto.getProductId()).get());
+        sku.getSizeVariantDetails().forEach(svd -> svd.setSkuSizeId(sku.getSkuId()+"_"+svd.getSize()));
         BigDecimal finalPrice = sku.getMrp().subtract(sku.getDiscountPercentage().multiply(sku.getMrp()).divide(new BigDecimal(100), MathContext.DECIMAL128));
         sku.setFinalPrice(finalPrice);
 

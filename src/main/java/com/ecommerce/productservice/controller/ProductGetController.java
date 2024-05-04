@@ -1,24 +1,21 @@
 package com.ecommerce.productservice.controller;
 
 import com.ecommerce.productservice.dto.*;
+import com.ecommerce.productservice.dto.response.*;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -28,8 +25,6 @@ public class ProductGetController {
 
     @Autowired
     ProductGetService productService;
-    @Autowired
-    Environment environment;
 
     @Operation(summary = "To get Master Category")
     @ApiResponses(value = {
@@ -80,9 +75,9 @@ public class ProductGetController {
         return new ResponseEntity<>(productService.getBrand(), HttpStatus.OK);
     }
 
-    @Operation(summary = "To get Product")
+    @Operation(summary = "To get Product along with all related details")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product",
+            @ApiResponse(responseCode = "200", description = "Product with All related details",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ProductResponse.class)) }),
     })
@@ -99,6 +94,24 @@ public class ProductGetController {
 
         return new ResponseEntity<>(productService.getProduct(productId,productName,subCategoryName,categoryName,
                                                      masterCategoryName,brand,gender), HttpStatus.OK);
+    }
+
+    @Operation(summary = "To get Product details for Product Listing Page")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product with required info only",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductListingResponse.class)) })
+    })
+    @GetMapping("/product/listing")
+    public ResponseEntity<Set<ProductListingResponse>> getProductListing(
+                                                @RequestParam(required = false) String subCategoryName,
+                                                @RequestParam(required = false) String categoryName,
+                                                @RequestParam(required = false) String masterCategoryName,
+                                                @RequestParam(required = false) String brand,
+                                                @RequestParam(required = false) String gender)
+    {
+        return new ResponseEntity<>(productService.getProductListing(subCategoryName,categoryName,
+                                                            masterCategoryName,brand,gender), HttpStatus.OK);
     }
 
     @Operation(summary = "To get Review")
@@ -131,10 +144,10 @@ public class ProductGetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Various colour of product both in & out of stock",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AvailableColours.class)) }),
+                            schema = @Schema(implementation = ColourInfo.class)) }),
     })
     @GetMapping("/product/colours")
-    public ResponseEntity<AvailableColours> getSkuColours(@RequestParam String productId){
+    public ResponseEntity<Set<ColourInfo>> getSkuColours(@RequestParam String productId){
         return new ResponseEntity<>(productService.getColours(productId), HttpStatus.OK);
     }
 
@@ -143,12 +156,11 @@ public class ProductGetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Various sizes of product both in & out of stock",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(type = "Integer", additionalProperties = Schema.AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION,
-                            example = "{ L : 30 }")) }),
+                            schema = @Schema(implementation = SizeInfo.class))}),
 
     })
     @GetMapping("sku/sizes")
-    public ResponseEntity<Map<String,Integer>> getSkuSize(@RequestParam String skuId){
+    public ResponseEntity<List<SizeInfo>> getSkuSize(@RequestParam String skuId){
         return new ResponseEntity<>(productService.getSizes(skuId), HttpStatus.OK);
     }
 }

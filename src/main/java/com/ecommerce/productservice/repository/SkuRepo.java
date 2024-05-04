@@ -19,4 +19,9 @@ public interface SkuRepo extends CrudRepository<Sku, String> {
             "GROUP BY s.sku_id", nativeQuery = true)
     List<Sku> findSKU(String productId,String skuId,String Size, String colour);
 
+    @Query(value = "SELECT s.* FROM product.sku s " +
+            "LEFT OUTER JOIN product.size_variants sv ON s.sku_id = sv.sku_sku_id "+
+            "WHERE sv.sku_size_id = ?1 ",nativeQuery = true)
+    Sku findSize(String sizeId);
+
 }

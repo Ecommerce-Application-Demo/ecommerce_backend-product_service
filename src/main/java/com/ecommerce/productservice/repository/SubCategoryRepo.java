@@ -2,11 +2,11 @@ package com.ecommerce.productservice.repository;
 
 import com.ecommerce.productservice.entity.SubCategory;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.ListCrudRepository;
 
 import java.util.List;
 
-public interface SubCategoryRepo extends CrudRepository<SubCategory, String> {
+public interface SubCategoryRepo extends ListCrudRepository<SubCategory, String> {
 
     @Query(value = "SELECT * FROM product.sub_category sc LEFT OUTER JOIN product.category c " +
             "ON sc.sub_category_category = c.category_name " +
