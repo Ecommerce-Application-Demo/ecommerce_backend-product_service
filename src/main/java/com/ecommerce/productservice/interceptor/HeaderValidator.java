@@ -10,11 +10,13 @@ public class HeaderValidator {
 
     public static void requestValidator(HttpServletRequest request,String apiKey, String apiSecret) throws BadRequestException {
         List<String> requestHeaders = Collections.list(request.getHeaderNames());
-        if(!requestHeaders.contains(apiKey)){
-            throw new BadRequestException("API Key is not passed");
-        } else {
-            if(!request.getHeader(apiKey).equals(apiSecret)){
-                throw new BadRequestException("API Secret is Invalid");
+        if(!request.getMethod().equalsIgnoreCase("OPTIONS")) {
+            if (!requestHeaders.contains(apiKey)) {
+                throw new BadRequestException("API Key is not passed");
+            } else {
+                if (!request.getHeader(apiKey).equals(apiSecret)) {
+                    throw new BadRequestException("API Secret is Invalid");
+                }
             }
         }
     }

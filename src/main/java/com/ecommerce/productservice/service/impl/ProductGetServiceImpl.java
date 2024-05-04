@@ -1,6 +1,7 @@
 package com.ecommerce.productservice.service.impl;
 
 import com.ecommerce.productservice.dto.*;
+import com.ecommerce.productservice.dto.response.*;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.Sku;
 import com.ecommerce.productservice.repository.*;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.StreamSupport;
 
 @Service
 public class ProductGetServiceImpl implements ProductGetService {
@@ -34,9 +34,8 @@ public class ProductGetServiceImpl implements ProductGetService {
 
     @Override
     public List<MasterCategoryDto> getMasterCategory(String masterCategoryId, String masterCategoryName) {
-        List<MasterCategoryDto> masterCategoryDto = masterCategoryRepo.findMasterCategory(masterCategoryName, masterCategoryId)
+        return masterCategoryRepo.findMasterCategory(masterCategoryName, masterCategoryId)
                 .stream().map(masterCategory -> modelMapper.map(masterCategory, MasterCategoryDto.class)).toList();
-        return masterCategoryDto;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class ProductGetServiceImpl implements ProductGetService {
             categoryDto = categoryRepo.findCategory(categoryName, categoryId, masterCategory).stream()
                     .map(category -> modelMapper.map(category, CategoryDto.class)).toList();
         } else {
-            categoryDto = StreamSupport.stream(categoryRepo.findAll().spliterator(), false)
+            categoryDto = categoryRepo.findAll().stream()
                     .map(category -> modelMapper.map(category, CategoryDto.class)).toList();
         }
         return categoryDto;
@@ -59,7 +58,7 @@ public class ProductGetServiceImpl implements ProductGetService {
             subCategoryDto = subCategoryRepo.findSubCategory(subCategoryName, subCategoryId, categoryName).stream()
                     .map(subCategory -> modelMapper.map(subCategory, SubCategoryDto.class)).toList();
         } else {
-            subCategoryDto = StreamSupport.stream(subCategoryRepo.findAll().spliterator(), false)
+            subCategoryDto = subCategoryRepo.findAll().stream()
                     .map(subCategory -> modelMapper.map(subCategory, SubCategoryDto.class)).toList();
         }
         return subCategoryDto;
@@ -67,9 +66,8 @@ public class ProductGetServiceImpl implements ProductGetService {
 
     @Override
     public List<BrandDto> getBrand() {
-        List<BrandDto> brandDto = StreamSupport.stream(brandRepo.findAll().spliterator(), false)
+        return brandRepo.findAll().stream()
                 .map(brand -> modelMapper.map(brand, BrandDto.class)).toList();
-        return brandDto;
     }
 
     @Override
@@ -78,22 +76,14 @@ public class ProductGetServiceImpl implements ProductGetService {
         List<ProductResponse> productDto;
         if (masterCategoryName != null || subCategoryName != null || categoryName != null || brand != null || gender != null) {
             productDto = productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName, brand, gender).stream()
-                    .map(product -> {
-                        product.setProductAvgRating(reviewRatingRepo.findAvgRating(product.getProductId()).toString());
-                        product.setReviewCount(reviewRatingRepo.findCountByProductId(product.getProductId()).toString());
-                        return modelMapper.map(product, ProductDto.class);
-                    }).map(productDto1 -> {
+                    .map(productDto1 -> {
                         ProductResponse res = modelMapper.map(productDto1, ProductResponse.class);
                         res.setSku(getSku(productDto1.getProductId().toString(), null, null, null));
                         return res;
                     }).toList();
         }else {
             productDto = productRepo.findProductById_Name(productName, productId).stream()
-                    .map(product -> {
-                        product.setProductAvgRating(reviewRatingRepo.findAvgRating(product.getProductId()).toString());
-                        product.setReviewCount(reviewRatingRepo.findCountByProductId(product.getProductId()).toString());
-                         return modelMapper.map(product, ProductDto.class);
-                    }).map(productDto1 -> {
+                    .map(productDto1 -> {
                         ProductResponse res = modelMapper.map(productDto1, ProductResponse.class);
                         res.setSku(getSku(productDto1.getProductId().toString(), null, null, null));
                         return res;
@@ -120,35 +110,59 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     @Override
-    public Map<String,Integer> getSizes(String skuId){
+    public List<SizeInfo> getSizes(String skuId){
         Sku sku = skuRepo.findById(skuId).orElseGet(Sku::new);
-        Map<String,Integer> sizes = new HashMap<>();
+        List<SizeInfo> sizes = new ArrayList<>() ;
         if(!sku.getSizeVariantDetails().isEmpty()) {
             sku.getSizeVariantDetails().forEach(sizeVariantDetails -> {
-                    sizes.put(sizeVariantDetails.getSize(), sizeVariantDetails.getQuantity());
+                    sizes.add(new SizeInfo(sizeVariantDetails.getSkuSizeId(),sizeVariantDetails.getSize(),sizeVariantDetails.getQuantity()));
             });
         }
         return sizes;
     }
 
     @Override
-    public AvailableColours getColours(String productId){
+    public Set<ColourInfo> getColours(String productId){
         List<Sku> skuList=skuRepo.findSKU(productId,null,null,null);
-        Map<String,String> inStockColours=new HashMap<>();
-        Map<String,String> outStockColours=new HashMap<>();
+        Set<ColourInfo> colourInfos=new HashSet<>();
         if(!skuList.isEmpty()){
             skuList.forEach(sku -> {
                 AtomicBoolean flag= new AtomicBoolean(false);
-                getSizes(sku.getSkuId()).forEach((size, quantity) -> {
-                    if (quantity > 0)
+                getSizes(sku.getSkuId()).forEach(size -> {
+                    if (size.quantity() > 0)
                         flag.set(true);
                 });
                 if(flag.get())
-                    inStockColours.put(sku.getColour(),sku.getImages().getDefaultImage());
+                    colourInfos.add(new ColourInfo(sku.getSkuId(),sku.getColour(),sku.getImages().getDefaultImage(),true));
                 else
-                    outStockColours.put(sku.getColour(),sku.getImages().getDefaultImage());
+                    colourInfos.add(new ColourInfo(sku.getSkuId(),sku.getColour(),sku.getImages().getDefaultImage(),false));
             });
         }
-        return new AvailableColours(inStockColours,outStockColours);
+        return colourInfos;
+    }
+
+    @Override
+    public Set<ProductListingResponse> getProductListing(String subCategoryName, String categoryName, String masterCategoryName, String brand, String gender) {
+
+        Set<ProductListingResponse> productListingResponse = new HashSet<>();
+
+        productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName, brand, gender)
+                  .forEach(product -> {
+                        ProductListingResponse res = modelMapper.map(product,ProductListingResponse.class);
+                        getSku(product.getProductId().toString(), null, null, null)
+                                .forEach( skuDto -> {
+                                    res.setSkuId(skuDto.getSkuId());
+                                    res.setSkuName(skuDto.getSkuName());
+                                    res.setColour(skuDto.getColour());
+                                    res.setMrp(skuDto.getMrp());
+                                    res.setDiscountPercentage(skuDto.getDiscountPercentage());
+                                    res.setFinalPrice(skuDto.getFinalPrice());
+                                    res.setImages(skuDto.getImages());
+                                    productListingResponse.add(res);
+                                });
+                  }
+                );
+        return productListingResponse;
     }
 }
+

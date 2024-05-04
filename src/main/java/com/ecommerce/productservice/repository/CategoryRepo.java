@@ -1,13 +1,12 @@
 package com.ecommerce.productservice.repository;
 
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-
 import com.ecommerce.productservice.entity.Category;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.ListCrudRepository;
 
 import java.util.List;
 
-public interface CategoryRepo extends CrudRepository<Category, String> {
+public interface CategoryRepo extends ListCrudRepository<Category, String> {
 
     @Query(value = "SELECT * FROM product.category c LEFT OUTER JOIN product.master_category mc " +
                     "ON c.category_master_category = mc.master_category_name " +
