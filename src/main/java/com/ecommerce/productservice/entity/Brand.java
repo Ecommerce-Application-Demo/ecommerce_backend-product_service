@@ -1,12 +1,15 @@
 package com.ecommerce.productservice.entity;
 
-import java.util.List;
-import java.util.UUID;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -20,6 +23,7 @@ public class Brand {
 	@Column(length = 500)
 	private String brandDescription;
 	private String brandAddress;
+	private String brandDefaultImage;
 	@OneToMany(mappedBy = "brand")
 	private List<Product> productId;
 }
