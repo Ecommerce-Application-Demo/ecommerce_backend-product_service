@@ -24,5 +24,5 @@ public class ProductResponse {
     private CategoryDto category;
     private SubCategoryDto SubCategory;
     private BrandDto brand;
-    private List<SkuDto> sku;
+    private List<StyleVariantDetailsDto> sku;
 }

@@ -1,7 +1,6 @@
 package com.ecommerce.productservice.dto.request;
 
 import com.ecommerce.productservice.entity.Images;
-import com.ecommerce.productservice.entity.SizeVariantDetails;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +18,6 @@ public class SkuRequest {
     private BigDecimal mrp;
     private BigDecimal discountPercentage;
     private Images images;
-    private List<SizeVariantDetails> sizeVariantDetails;
+    private List<SizeVariantDto> sizeDetails;
     private UUID productId;
 }

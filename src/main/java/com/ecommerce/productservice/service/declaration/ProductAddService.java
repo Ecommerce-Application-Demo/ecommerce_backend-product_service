@@ -6,7 +6,7 @@ import com.ecommerce.productservice.dto.request.ProductRequest;
 import com.ecommerce.productservice.dto.request.SkuRequest;
 import com.ecommerce.productservice.dto.request.SubCategoryRequest;
 import com.ecommerce.productservice.entity.ReviewRating;
-import com.ecommerce.productservice.entity.Sku;
+import com.ecommerce.productservice.entity.ProductStyleVariant;
 
 public interface ProductAddService {
 
@@ -22,5 +22,5 @@ public interface ProductAddService {
 
     ReviewRating addReview(ReviewRating reviewRating);
 
-    Sku addSku(SkuRequest sku);
+    ProductStyleVariant addSku(SkuRequest sku);
 }

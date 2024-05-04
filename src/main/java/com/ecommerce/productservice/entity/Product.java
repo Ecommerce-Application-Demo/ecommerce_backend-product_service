@@ -18,11 +18,12 @@ public class Product {
 	@GeneratedValue(strategy =GenerationType.UUID )
 	private UUID productId;
 	private String productName;
-	@Column(length = 500)
+	@Column(length = 1000)
 	private String productDescription;
 	private String productAvgRating;
 	private String reviewCount;
 	private String gender;
+	@Column(length = 1000)
 	private String material;
 	@ManyToOne
 	@JoinColumn(name = "product_master_category")
@@ -37,5 +38,5 @@ public class Product {
 	@JoinColumn(name = "product_brand")
 	private Brand brand;
 	@OneToMany(mappedBy = "product")
-	private List<Sku> sku;
+	private List<ProductStyleVariant> productStyleVariant;
 }

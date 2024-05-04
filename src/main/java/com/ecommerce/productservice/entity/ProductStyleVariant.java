@@ -16,19 +16,20 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Sku {
+public class ProductStyleVariant {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private String skuId;
-	private String skuName;
+	private String styleId;
+	private String styleName;
 	private String colour;
 	private BigDecimal mrp;
 	private BigDecimal discountPercentage;
 	private BigDecimal finalPrice;
 	@ElementCollection
 	@CollectionTable(name = "size_variants")
-	private List<SizeVariantDetails> sizeVariantDetails = new ArrayList<>();
+	private List<SizeDetails> sizeDetails = new ArrayList<>();
+	private String sizeDetailsImageUrl;
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(columnDefinition = "jsonb")
 	private Images images;

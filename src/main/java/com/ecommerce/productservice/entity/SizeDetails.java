@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class SizeVariantDetails {
+public class SizeDetails {
 
-    private String skuSizeId;
+    private String sizeVariantId;
     private String size;
-    private String sizeDetailsImageUrl;
-    private Integer quantity;
-    private String availablePincodes;
 }

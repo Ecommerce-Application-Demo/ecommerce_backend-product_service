@@ -1,12 +1,12 @@
 package com.ecommerce.productservice.repository;
 
-import com.ecommerce.productservice.entity.Sku;
+import com.ecommerce.productservice.entity.ProductStyleVariant;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface SkuRepo extends CrudRepository<Sku, String> {
+public interface SkuRepo extends CrudRepository<ProductStyleVariant, String> {
 
 
     @Query(value = "SELECT s.* FROM product.sku s " +
@@ -17,11 +17,11 @@ public interface SkuRepo extends CrudRepository<Sku, String> {
             "AND (?3 IS NULL OR sv.size = ?3)"+
             "AND (?4 IS NULL OR s.colour = ?4) " +
             "GROUP BY s.sku_id", nativeQuery = true)
-    List<Sku> findSKU(String productId,String skuId,String Size, String colour);
+    List<ProductStyleVariant> findSKU(String productId, String skuId, String Size, String colour);
 
     @Query(value = "SELECT s.* FROM product.sku s " +
             "LEFT OUTER JOIN product.size_variants sv ON s.sku_id = sv.sku_sku_id "+
             "WHERE sv.sku_size_id = ?1 ",nativeQuery = true)
-    Sku findSize(String sizeId);
+    ProductStyleVariant findSize(String sizeId);
 
 }

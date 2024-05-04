@@ -3,7 +3,7 @@ package com.ecommerce.productservice.service.impl;
 import com.ecommerce.productservice.dto.*;
 import com.ecommerce.productservice.dto.response.*;
 import com.ecommerce.productservice.entity.ReviewRating;
-import com.ecommerce.productservice.entity.Sku;
+import com.ecommerce.productservice.entity.ProductStyleVariant;
 import com.ecommerce.productservice.repository.*;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
 import org.modelmapper.ModelMapper;
@@ -98,23 +98,23 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     @Override
-    public List<SkuDto> getSku(String productId, String skuId, String size, String colour) {
+    public List<StyleVariantDetailsDto> getSku(String productId, String skuId, String size, String colour) {
 
         return skuRepo.findSKU(productId,skuId,size,colour).stream()
                 .map(sku -> {
-                                sku.setSizeVariantDetails(sku.getSizeVariantDetails().stream().toList());
-                               SkuDto skuDto1= modelMapper.map(sku,SkuDto.class);
-                               skuDto1.setProductId(sku.getProduct().getProductId());
-                               return skuDto1;
+                                sku.setSizeDetails(sku.getSizeDetails().stream().toList());
+                               StyleVariantDetailsDto styleVariantDetailsDto1 = modelMapper.map(sku, StyleVariantDetailsDto.class);
+                               styleVariantDetailsDto1.setProductId(sku.getProduct().getProductId());
+                               return styleVariantDetailsDto1;
                 }).toList();
     }
 
     @Override
     public List<SizeInfo> getSizes(String skuId){
-        Sku sku = skuRepo.findById(skuId).orElseGet(Sku::new);
+        ProductStyleVariant productStyleVariant = skuRepo.findById(skuId).orElseGet(ProductStyleVariant::new);
         List<SizeInfo> sizes = new ArrayList<>() ;
-        if(!sku.getSizeVariantDetails().isEmpty()) {
-            sku.getSizeVariantDetails().forEach(sizeVariantDetails -> {
+        if(!productStyleVariant.getSizeDetails().isEmpty()) {
+            productStyleVariant.getSizeDetails().forEach(sizeVariantDetails -> {
                     sizes.add(new SizeInfo(sizeVariantDetails.getSkuSizeId(),sizeVariantDetails.getSize(),sizeVariantDetails.getQuantity()));
             });
         }
@@ -123,10 +123,10 @@ public class ProductGetServiceImpl implements ProductGetService {
 
     @Override
     public Set<ColourInfo> getColours(String productId){
-        List<Sku> skuList=skuRepo.findSKU(productId,null,null,null);
+        List<ProductStyleVariant> productStyleVariantList =skuRepo.findSKU(productId,null,null,null);
         Set<ColourInfo> colourInfos=new HashSet<>();
-        if(!skuList.isEmpty()){
-            skuList.forEach(sku -> {
+        if(!productStyleVariantList.isEmpty()){
+            productStyleVariantList.forEach(sku -> {
                 AtomicBoolean flag= new AtomicBoolean(false);
                 getSizes(sku.getSkuId()).forEach(size -> {
                     if (size.quantity() > 0)
@@ -150,14 +150,14 @@ public class ProductGetServiceImpl implements ProductGetService {
                   .forEach(product -> {
                         ProductListingResponse res = modelMapper.map(product,ProductListingResponse.class);
                         getSku(product.getProductId().toString(), null, null, null)
-                                .forEach( skuDto -> {
-                                    res.setSkuId(skuDto.getSkuId());
-                                    res.setSkuName(skuDto.getSkuName());
-                                    res.setColour(skuDto.getColour());
-                                    res.setMrp(skuDto.getMrp());
-                                    res.setDiscountPercentage(skuDto.getDiscountPercentage());
-                                    res.setFinalPrice(skuDto.getFinalPrice());
-                                    res.setImages(skuDto.getImages());
+                                .forEach(styleVariantDetailsDto -> {
+                                    res.setSkuId(styleVariantDetailsDto.getSkuId());
+                                    res.setSkuName(styleVariantDetailsDto.getSkuName());
+                                    res.setColour(styleVariantDetailsDto.getColour());
+                                    res.setMrp(styleVariantDetailsDto.getMrp());
+                                    res.setDiscountPercentage(styleVariantDetailsDto.getDiscountPercentage());
+                                    res.setFinalPrice(styleVariantDetailsDto.getFinalPrice());
+                                    res.setImages(styleVariantDetailsDto.getImages());
                                     productListingResponse.add(res);
                                 });
                   }

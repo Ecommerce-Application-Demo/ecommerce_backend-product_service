@@ -7,7 +7,7 @@ import com.ecommerce.productservice.dto.request.SubCategoryRequest;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.service.declaration.ProductAddService;
 import com.ecommerce.productservice.dto.request.ProductRequest;
-import com.ecommerce.productservice.entity.Sku;
+import com.ecommerce.productservice.entity.ProductStyleVariant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -100,10 +100,10 @@ public class ProductAddController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product SKU Added",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Sku.class)) }),
+                            schema = @Schema(implementation = ProductStyleVariant.class)) }),
     })
     @PostMapping("/product/sku")
-    public ResponseEntity<Sku> addProductSku(@RequestBody SkuRequest sku){
+    public ResponseEntity<ProductStyleVariant> addProductSku(@RequestBody SkuRequest sku){
         return new ResponseEntity<>(productService.addSku(sku), HttpStatus.OK);
     }
 

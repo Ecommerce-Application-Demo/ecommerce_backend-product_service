@@ -1,7 +1,7 @@
 package com.ecommerce.productservice.service.impl;
 
 import com.ecommerce.productservice.entity.PincodeDetails;
-import com.ecommerce.productservice.entity.SizeVariantDetails;
+import com.ecommerce.productservice.entity.SizeDetails;
 import com.ecommerce.productservice.repository.PincodeRepo;
 import com.ecommerce.productservice.repository.SkuRepo;
 import com.ecommerce.productservice.service.declaration.HelperService;
@@ -40,7 +40,7 @@ public class HelperServiceImpl implements HelperService {
 
     @Override
     public String getDeliveryAvailability(String pincode, String sizeId) {
-        SizeVariantDetails svd = skuRepo.findSize(sizeId).getSizeVariantDetails().getFirst();
+        SizeDetails svd = skuRepo.findSize(sizeId).getSizeDetails().getFirst();
         AtomicBoolean flag = new AtomicBoolean(false);
         if (svd != null && svd.getQuantity() > 0) {
             List<String> codes = List.of(svd.getAvailablePincodes().split(","));

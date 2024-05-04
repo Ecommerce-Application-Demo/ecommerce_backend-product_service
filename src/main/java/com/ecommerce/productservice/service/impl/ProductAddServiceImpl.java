@@ -91,14 +91,14 @@ public class ProductAddServiceImpl implements ProductAddService {
     }
 
     @Override
-    public Sku addSku(SkuRequest skuDto){
-        Sku sku = modelMapper.map(skuDto, Sku.class);
-        sku.setImages(skuDto.getImages());
-        sku.setProduct(productRepo.findById(skuDto.getProductId()).get());
-        sku.getSizeVariantDetails().forEach(svd -> svd.setSkuSizeId(sku.getSkuId()+"_"+svd.getSize()));
-        BigDecimal finalPrice = sku.getMrp().subtract(sku.getDiscountPercentage().multiply(sku.getMrp()).divide(new BigDecimal(100), MathContext.DECIMAL128));
-        sku.setFinalPrice(finalPrice);
-
-        return  skuRepo.save(sku);
+    public ProductStyleVariant addSku(SkuRequest skuDto){
+        ProductStyleVariant productStyleVariant = modelMapper.map(skuDto, ProductStyleVariant.class);
+        productStyleVariant.setImages(skuDto.getImages());
+        productStyleVariant.setProduct(productRepo.findById(skuDto.getProductId()).get());
+        BigDecimal finalPrice = productStyleVariant.getMrp().subtract(productStyleVariant.getDiscountPercentage().multiply(productStyleVariant.getMrp()).divide(new BigDecimal(100), MathContext.DECIMAL128));
+        productStyleVariant.setFinalPrice(finalPrice);
+        ProductStyleVariant response=skuRepo.save(productStyleVariant);
+        response.getSizeDetails().forEach(svd -> svd.setSkuSizeId(response.getSkuId()+"_"+svd.getSize()));
+        return skuRepo.save(response);
     }
 }

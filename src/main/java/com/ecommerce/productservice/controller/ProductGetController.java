@@ -129,13 +129,13 @@ public class ProductGetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product SKU",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SkuDto.class)) }),
+                            schema = @Schema(implementation = StyleVariantDetailsDto.class)) }),
     })
     @GetMapping("/product/sku")
-    public ResponseEntity<List<SkuDto>> getProductSku(@RequestParam String productId,
-                                                   @RequestParam(required = false) String skuId,
-                                                   @RequestParam(required = false) String size,
-                                                   @RequestParam (required = false) String colour){
+    public ResponseEntity<List<StyleVariantDetailsDto>> getProductSku(@RequestParam String productId,
+                                                                      @RequestParam(required = false) String skuId,
+                                                                      @RequestParam(required = false) String size,
+                                                                      @RequestParam (required = false) String colour){
         return new ResponseEntity<>(productService.getSku(productId,skuId,size,colour), HttpStatus.OK);
     }
 

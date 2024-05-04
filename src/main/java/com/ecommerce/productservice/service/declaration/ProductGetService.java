@@ -22,7 +22,7 @@ public interface ProductGetService {
 
     List<ReviewRating> getReview(UUID productId);
 
-    List<SkuDto> getSku(String productId, String skuId, String size, String colour );
+    List<StyleVariantDetailsDto> getSku(String productId, String skuId, String size, String colour );
 
     List<SizeInfo> getSizes(String skuId);
 
