@@ -3,9 +3,11 @@ package com.ecommerce.productservice.service.impl;
 import com.ecommerce.productservice.dto.*;
 import com.ecommerce.productservice.dto.request.CategoryRequest;
 import com.ecommerce.productservice.dto.request.ProductRequest;
-import com.ecommerce.productservice.dto.request.SkuRequest;
+import com.ecommerce.productservice.dto.request.StyleVariantRequest;
 import com.ecommerce.productservice.dto.request.SubCategoryRequest;
 import com.ecommerce.productservice.entity.*;
+import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
+import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
 import com.ecommerce.productservice.repository.*;
 import com.ecommerce.productservice.service.declaration.ProductAddService;
 import jakarta.transaction.Transactional;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,7 +37,11 @@ public class ProductAddServiceImpl implements ProductAddService {
     @Autowired
     ReviewRatingRepo reviewRatingRepo;
     @Autowired
-    SkuRepo skuRepo;
+    StyleVariantRepo styleVariantRepo;
+    @Autowired
+    InventoryRepo inventoryRepo;
+    @Autowired
+    WarehouseRepo warehouseRepo;
     @Autowired
     ModelMapper modelMapper;
 
@@ -91,14 +98,25 @@ public class ProductAddServiceImpl implements ProductAddService {
     }
 
     @Override
-    public ProductStyleVariant addSku(SkuRequest skuDto){
-        ProductStyleVariant productStyleVariant = modelMapper.map(skuDto, ProductStyleVariant.class);
-        productStyleVariant.setImages(skuDto.getImages());
-        productStyleVariant.setProduct(productRepo.findById(skuDto.getProductId()).get());
+    public ProductStyleVariant addStyleVariant(StyleVariantRequest request){
+        ProductStyleVariant productStyleVariant = modelMapper.map(request, ProductStyleVariant.class);
+        productStyleVariant.setProduct(productRepo.findById(request.getProductId()).get());
         BigDecimal finalPrice = productStyleVariant.getMrp().subtract(productStyleVariant.getDiscountPercentage().multiply(productStyleVariant.getMrp()).divide(new BigDecimal(100), MathContext.DECIMAL128));
         productStyleVariant.setFinalPrice(finalPrice);
-        ProductStyleVariant response=skuRepo.save(productStyleVariant);
-        response.getSizeDetails().forEach(svd -> svd.setSkuSizeId(response.getSkuId()+"_"+svd.getSize()));
-        return skuRepo.save(response);
+        ProductStyleVariant response= styleVariantRepo.save(productStyleVariant);
+        response.getSizeDetails().forEach(svd -> svd.setSizeId(response.getStyleId()+"_"+svd.getSize()));
+        return styleVariantRepo.save(response);
+    }
+
+    @Override
+    public Warehouse addWarehouse(Warehouse warehouse){
+       return warehouseRepo.save(warehouse);
+    }
+
+    @Override
+    public List<Inventory> addInventory(List<Inventory> inventory){
+        inventory=inventoryRepo.saveAll(inventory);
+        inventoryRepo.updateQuantity(inventory.getFirst().getSizeVariantId());
+        return  inventory;
     }
 }

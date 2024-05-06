@@ -3,6 +3,7 @@ package com.ecommerce.productservice.controller;
 import com.ecommerce.productservice.dto.*;
 import com.ecommerce.productservice.dto.response.*;
 import com.ecommerce.productservice.entity.ReviewRating;
+import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -125,18 +126,18 @@ public class ProductGetController {
         return new ResponseEntity<>(productService.getReview(productId), HttpStatus.OK);
     }
 
-    @Operation(summary = "To get All Product SKUs")
+    @Operation(summary = "To get All Product Styles")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product SKU",
+            @ApiResponse(responseCode = "200", description = "Product Style",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = StyleVariantDetailsDto.class)) }),
     })
-    @GetMapping("/product/sku")
-    public ResponseEntity<List<StyleVariantDetailsDto>> getProductSku(@RequestParam String productId,
-                                                                      @RequestParam(required = false) String skuId,
+    @GetMapping("/product/style")
+    public ResponseEntity<List<StyleVariantDetailsDto>> getProductStyle(@RequestParam String productId,
+                                                                      @RequestParam(required = false) String styleId,
                                                                       @RequestParam(required = false) String size,
                                                                       @RequestParam (required = false) String colour){
-        return new ResponseEntity<>(productService.getSku(productId,skuId,size,colour), HttpStatus.OK);
+        return new ResponseEntity<>(productService.getStyleVariants(productId,styleId,size,colour), HttpStatus.OK);
     }
 
 
@@ -147,7 +148,7 @@ public class ProductGetController {
                             schema = @Schema(implementation = ColourInfo.class)) }),
     })
     @GetMapping("/product/colours")
-    public ResponseEntity<Set<ColourInfo>> getSkuColours(@RequestParam String productId){
+    public ResponseEntity<Set<ColourInfo>> getaProductColours(@RequestParam String productId){
         return new ResponseEntity<>(productService.getColours(productId), HttpStatus.OK);
     }
 
@@ -159,8 +160,19 @@ public class ProductGetController {
                             schema = @Schema(implementation = SizeInfo.class))}),
 
     })
-    @GetMapping("sku/sizes")
-    public ResponseEntity<List<SizeInfo>> getSkuSize(@RequestParam String skuId){
-        return new ResponseEntity<>(productService.getSizes(skuId), HttpStatus.OK);
+    @GetMapping("style/sizes")
+    public ResponseEntity<List<SizeInfo>> getStyleSize(@RequestParam String styleId){
+        return new ResponseEntity<>(productService.getSizes(styleId), HttpStatus.OK);
+    }
+
+    @Operation(summary = "To get all warehouses")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get all warehouse",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Warehouse.class)) }),
+    })
+    @GetMapping("/warehouse")
+    public ResponseEntity<List<Warehouse>> getWarehouse(@RequestParam(required = false) Integer warehouseId){
+        return new ResponseEntity<>(productService.getWarehouse(warehouseId), HttpStatus.OK);
     }
 }

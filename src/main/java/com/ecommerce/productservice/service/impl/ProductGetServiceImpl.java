@@ -1,9 +1,13 @@
 package com.ecommerce.productservice.service.impl;
 
 import com.ecommerce.productservice.dto.*;
-import com.ecommerce.productservice.dto.response.*;
-import com.ecommerce.productservice.entity.ReviewRating;
+import com.ecommerce.productservice.dto.response.ColourInfo;
+import com.ecommerce.productservice.dto.response.ProductListingResponse;
+import com.ecommerce.productservice.dto.response.ProductResponse;
+import com.ecommerce.productservice.dto.response.SizeInfo;
 import com.ecommerce.productservice.entity.ProductStyleVariant;
+import com.ecommerce.productservice.entity.ReviewRating;
+import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
 import com.ecommerce.productservice.repository.*;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
 import org.modelmapper.ModelMapper;
@@ -14,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
+
 public class ProductGetServiceImpl implements ProductGetService {
     @Autowired
     MasterCategoryRepo masterCategoryRepo;
@@ -28,7 +33,11 @@ public class ProductGetServiceImpl implements ProductGetService {
     @Autowired
     ReviewRatingRepo reviewRatingRepo;
     @Autowired
-    SkuRepo skuRepo;
+    StyleVariantRepo styleVariantRepo;
+    @Autowired
+    InventoryRepo inventoryRepo;
+    @Autowired
+    WarehouseRepo warehouseRepo;
     @Autowired
     ModelMapper modelMapper;
 
@@ -78,14 +87,14 @@ public class ProductGetServiceImpl implements ProductGetService {
             productDto = productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName, brand, gender).stream()
                     .map(productDto1 -> {
                         ProductResponse res = modelMapper.map(productDto1, ProductResponse.class);
-                        res.setSku(getSku(productDto1.getProductId().toString(), null, null, null));
+                        res.setStyleVariants(getStyleVariants(productDto1.getProductId().toString(), null, null, null));
                         return res;
                     }).toList();
         }else {
             productDto = productRepo.findProductById_Name(productName, productId).stream()
                     .map(productDto1 -> {
                         ProductResponse res = modelMapper.map(productDto1, ProductResponse.class);
-                        res.setSku(getSku(productDto1.getProductId().toString(), null, null, null));
+                        res.setStyleVariants(getStyleVariants(productDto1.getProductId().toString(), null, null, null));
                         return res;
                     }).toList();
         }
@@ -98,9 +107,9 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     @Override
-    public List<StyleVariantDetailsDto> getSku(String productId, String skuId, String size, String colour) {
+    public List<StyleVariantDetailsDto> getStyleVariants(String productId, String styleId, String size, String colour) {
 
-        return skuRepo.findSKU(productId,skuId,size,colour).stream()
+        return styleVariantRepo.findStyle(productId,styleId,size,colour).stream()
                 .map(sku -> {
                                 sku.setSizeDetails(sku.getSizeDetails().stream().toList());
                                StyleVariantDetailsDto styleVariantDetailsDto1 = modelMapper.map(sku, StyleVariantDetailsDto.class);
@@ -110,12 +119,12 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     @Override
-    public List<SizeInfo> getSizes(String skuId){
-        ProductStyleVariant productStyleVariant = skuRepo.findById(skuId).orElseGet(ProductStyleVariant::new);
+    public List<SizeInfo> getSizes(String styleId){
+        ProductStyleVariant productStyleVariant = styleVariantRepo.findById(styleId).orElseGet(ProductStyleVariant::new);
         List<SizeInfo> sizes = new ArrayList<>() ;
         if(!productStyleVariant.getSizeDetails().isEmpty()) {
-            productStyleVariant.getSizeDetails().forEach(sizeVariantDetails -> {
-                    sizes.add(new SizeInfo(sizeVariantDetails.getSkuSizeId(),sizeVariantDetails.getSize(),sizeVariantDetails.getQuantity()));
+            productStyleVariant.getSizeDetails().forEach(sizeDetails -> {
+                    sizes.add(new SizeInfo(sizeDetails.getSizeId(),sizeDetails.getSize(),sizeDetails.getQuantity()));
             });
         }
         return sizes;
@@ -123,19 +132,19 @@ public class ProductGetServiceImpl implements ProductGetService {
 
     @Override
     public Set<ColourInfo> getColours(String productId){
-        List<ProductStyleVariant> productStyleVariantList =skuRepo.findSKU(productId,null,null,null);
+        List<ProductStyleVariant> productStyleVariantList = styleVariantRepo.findStyle(productId,null,null,null);
         Set<ColourInfo> colourInfos=new HashSet<>();
         if(!productStyleVariantList.isEmpty()){
-            productStyleVariantList.forEach(sku -> {
+            productStyleVariantList.forEach(psv -> {
                 AtomicBoolean flag= new AtomicBoolean(false);
-                getSizes(sku.getSkuId()).forEach(size -> {
-                    if (size.quantity() > 0)
+                getSizes(psv.getStyleId()).forEach(size -> {
+                    if (size.quantity()!= null && size.quantity() > 0)
                         flag.set(true);
                 });
                 if(flag.get())
-                    colourInfos.add(new ColourInfo(sku.getSkuId(),sku.getColour(),sku.getImages().getDefaultImage(),true));
+                    colourInfos.add(new ColourInfo(psv.getStyleId(),psv.getColour(),psv.getImages().getDefaultImage(),true));
                 else
-                    colourInfos.add(new ColourInfo(sku.getSkuId(),sku.getColour(),sku.getImages().getDefaultImage(),false));
+                    colourInfos.add(new ColourInfo(psv.getStyleId(),psv.getColour(),psv.getImages().getDefaultImage(),false));
             });
         }
         return colourInfos;
@@ -149,10 +158,10 @@ public class ProductGetServiceImpl implements ProductGetService {
         productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName, brand, gender)
                   .forEach(product -> {
                         ProductListingResponse res = modelMapper.map(product,ProductListingResponse.class);
-                        getSku(product.getProductId().toString(), null, null, null)
+                        getStyleVariants(product.getProductId().toString(), null, null, null)
                                 .forEach(styleVariantDetailsDto -> {
-                                    res.setSkuId(styleVariantDetailsDto.getSkuId());
-                                    res.setSkuName(styleVariantDetailsDto.getSkuName());
+                                    res.setSkuId(styleVariantDetailsDto.getStyleId());
+                                    res.setSkuName(styleVariantDetailsDto.getStyleName());
                                     res.setColour(styleVariantDetailsDto.getColour());
                                     res.setMrp(styleVariantDetailsDto.getMrp());
                                     res.setDiscountPercentage(styleVariantDetailsDto.getDiscountPercentage());
@@ -163,6 +172,16 @@ public class ProductGetServiceImpl implements ProductGetService {
                   }
                 );
         return productListingResponse;
+    }
+
+    @Override
+    public List<Warehouse> getWarehouse(Integer warehouseId) {
+        if(warehouseId!=null){
+            return List.of(warehouseRepo.findById(warehouseId).orElseThrow());
+        }else{
+            return warehouseRepo.findAll();
+        }
+
     }
 }
 

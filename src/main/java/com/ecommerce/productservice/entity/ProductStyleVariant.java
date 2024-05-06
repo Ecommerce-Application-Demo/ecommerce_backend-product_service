@@ -27,14 +27,14 @@ public class ProductStyleVariant {
 	private BigDecimal discountPercentage;
 	private BigDecimal finalPrice;
 	@ElementCollection
-	@CollectionTable(name = "size_variants")
+	@CollectionTable(name = "size_details",joinColumns = @JoinColumn(name ="psv_id"))
 	private List<SizeDetails> sizeDetails = new ArrayList<>();
 	private String sizeDetailsImageUrl;
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(columnDefinition = "jsonb")
 	private Images images;
 	@ManyToOne
-	@JoinColumn(name = "sku_product")
+	@JoinColumn(name = "psv_product")
 	@JsonIgnore
 	private Product product;
 }

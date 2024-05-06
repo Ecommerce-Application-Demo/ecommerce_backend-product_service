@@ -3,10 +3,14 @@ package com.ecommerce.productservice.service.declaration;
 import com.ecommerce.productservice.dto.*;
 import com.ecommerce.productservice.dto.request.CategoryRequest;
 import com.ecommerce.productservice.dto.request.ProductRequest;
-import com.ecommerce.productservice.dto.request.SkuRequest;
+import com.ecommerce.productservice.dto.request.StyleVariantRequest;
 import com.ecommerce.productservice.dto.request.SubCategoryRequest;
-import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.ProductStyleVariant;
+import com.ecommerce.productservice.entity.ReviewRating;
+import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
+import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
+
+import java.util.List;
 
 public interface ProductAddService {
 
@@ -22,5 +26,9 @@ public interface ProductAddService {
 
     ReviewRating addReview(ReviewRating reviewRating);
 
-    ProductStyleVariant addSku(SkuRequest sku);
+    ProductStyleVariant addStyleVariant(StyleVariantRequest request);
+
+    Warehouse addWarehouse(Warehouse warehouse);
+
+    List<Inventory> addInventory(List<Inventory> inventory);
 }

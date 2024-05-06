@@ -1,9 +1,6 @@
 package com.ecommerce.productservice.entity.warehousemanagement;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,8 +15,8 @@ public class Inventory {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String inventoryId;
     @NotNull
-    private String skuSizeId;
-    @NotNull
-    private int warehouse;
+    private String sizeVariantId;
+    @OneToOne
+    private Warehouse warehouse;
     private int quantity;
 }

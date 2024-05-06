@@ -1,12 +1,12 @@
 package com.ecommerce.productservice.entity;
 
-import java.util.List;
-import java.util.UUID;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -18,7 +18,7 @@ public class MasterCategory {
 	@Id
 	private String masterCategoryName;
 	@Column(length = 500)
-	private String mastercategoryDescription;
+	private String masterCategoryDescription;
 	private String masterCategoryDefaultImage;
 	@OneToMany(mappedBy = "masterCategory",cascade = CascadeType.ALL)
 	private List<Category> category;

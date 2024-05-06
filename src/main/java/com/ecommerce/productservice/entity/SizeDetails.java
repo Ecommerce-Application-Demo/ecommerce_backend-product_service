@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class SizeDetails {
 
-    private String sizeVariantId;
+    private String sizeId;
     private String size;
+    private Integer quantity;
 }

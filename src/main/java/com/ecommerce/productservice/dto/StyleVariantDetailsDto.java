@@ -1,7 +1,7 @@
 package com.ecommerce.productservice.dto;
 
-import com.ecommerce.productservice.dto.request.SizeVariantDto;
 import com.ecommerce.productservice.entity.Images;
+import com.ecommerce.productservice.entity.SizeDetails;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +20,6 @@ public class StyleVariantDetailsDto {
     private BigDecimal discountPercentage;
     private BigDecimal finalPrice;
     private Images images;
-    private List<SizeVariantDto> sizeDetails;
+    private List<SizeDetails> sizeDetails;
     private UUID productId;
 }

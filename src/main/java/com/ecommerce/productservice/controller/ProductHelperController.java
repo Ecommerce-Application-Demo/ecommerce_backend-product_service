@@ -1,5 +1,6 @@
 package com.ecommerce.productservice.controller;
 
+import com.ecommerce.productservice.dto.response.DeliveryTimeDetails;
 import com.ecommerce.productservice.entity.Images;
 import com.ecommerce.productservice.repository.PincodeRepo;
 import com.ecommerce.productservice.service.declaration.HelperService;
@@ -9,10 +10,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,6 +27,8 @@ public class ProductHelperController {
     HelperService helperService;
     @Autowired
     PincodeRepo pincodeRepo;
+    @Autowired
+    Environment environment;
 
     @Operation(summary = "Returns modified image URLs with new height,width & quality")
     @ApiResponses(value = {
@@ -40,19 +45,25 @@ public class ProductHelperController {
         return new ResponseEntity<>(helperService.imageResizer(images, newHeight, newQuality, newWidth), HttpStatus.OK);
     }
 
-    @Operation(summary = "Returns the day for delivery for specified Pincode,if possible")
+    @Operation(summary = "Returns the day for delivery for specified Pincode,if possible including Warehouse info")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Delivery date of the specific Size of that product, if possible",
+            @ApiResponse(responseCode = "200", description = "Array of Delivery date of the specific Size of that product, if possible " +
+                    "and Warehouse info from lowest time to higher in order",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class)) }),
-            @ApiResponse(responseCode = "200", description = "Product not available at your area",
+                            schema = @Schema(implementation = DeliveryTimeDetails.class)) }),
+            @ApiResponse(responseCode = "404", description = "Product not available at your area",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = String.class))})
     })
     @GetMapping("/isDeliverable")
-    public ResponseEntity<String> delivery(@RequestParam String pincode,
-                                          @RequestParam String sizeId) {
-       return new ResponseEntity<>(helperService.getDeliveryAvailability(pincode,sizeId),HttpStatus.OK);
+    public ResponseEntity delivery(@RequestParam String pincode,
+                                   @RequestParam String sizeId) {
+        List<DeliveryTimeDetails> timeDetailsList = helperService.getDeliveryAvailability(pincode,sizeId);
+        if (timeDetailsList.isEmpty()) {
+            return new ResponseEntity<>(environment.getProperty("PRODUCT_NOT_AVAILABLE_MESSAGE"), HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(timeDetailsList, HttpStatus.OK);
+        }
     }
 
 

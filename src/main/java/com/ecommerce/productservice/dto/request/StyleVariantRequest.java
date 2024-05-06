@@ -1,6 +1,7 @@
 package com.ecommerce.productservice.dto.request;
 
 import com.ecommerce.productservice.entity.Images;
+import com.ecommerce.productservice.entity.SizeDetails;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,14 +11,14 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class SkuRequest {
+public class StyleVariantRequest {
 
-    private String skuId;
-    private String skuName;
+    private String styleId;
+    private String styleName;
     private String colour;
     private BigDecimal mrp;
     private BigDecimal discountPercentage;
     private Images images;
-    private List<SizeVariantDto> sizeDetails;
+    private List<SizeDetails> sizeDetails;
     private UUID productId;
 }
