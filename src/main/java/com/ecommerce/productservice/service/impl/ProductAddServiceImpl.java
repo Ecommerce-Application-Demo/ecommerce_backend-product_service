@@ -116,7 +116,7 @@ public class ProductAddServiceImpl implements ProductAddService {
     @Override
     public List<Inventory> addInventory(List<Inventory> inventory){
         inventory=inventoryRepo.saveAll(inventory);
-        inventoryRepo.updateQuantity(inventory.getFirst().getSizeVariantId());
+        inventory.forEach(inv -> inventoryRepo.updateQuantity(inv.getSizeVariantId()) );
         return  inventory;
     }
 }

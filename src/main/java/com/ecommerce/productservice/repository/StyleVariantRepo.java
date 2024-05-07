@@ -1,6 +1,7 @@
 package com.ecommerce.productservice.repository;
 
 import com.ecommerce.productservice.entity.ProductStyleVariant;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -21,7 +22,11 @@ public interface StyleVariantRepo extends CrudRepository<ProductStyleVariant, St
 
     @Query(value = "SELECT s.* FROM product.product_style_variant s " +
             "LEFT OUTER JOIN product.size_details sd ON s.style_id = sv.psv_id "+
-            "WHERE sd.size_variant_id = ?1 ",nativeQuery = true)
+            "WHERE sd.size_id = ?1 ",nativeQuery = true)
     ProductStyleVariant findSize(String sizeId);
+
+    @Modifying
+    @Query(value = "DELETE FROM product.size_details sd WHERE sd.size_id = ?1",nativeQuery = true)
+    void deleteSize(String sizeId);
 
 }

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Data
 @AllArgsConstructor
@@ -16,7 +18,8 @@ public class Inventory {
     private String inventoryId;
     @NotNull
     private String sizeVariantId;
-    @OneToOne
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Warehouse warehouse;
     private int quantity;
 }
