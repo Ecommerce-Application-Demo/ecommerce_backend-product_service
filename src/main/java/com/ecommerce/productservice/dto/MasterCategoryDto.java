@@ -14,5 +14,6 @@ public class MasterCategoryDto {
     private String masterCategoryName;
     private String masterCategoryDescription;
     private String masterCategoryDefaultImage;
+    private String breadcrumbUrl;
 
 }

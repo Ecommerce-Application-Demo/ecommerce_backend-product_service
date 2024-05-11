@@ -1,10 +1,8 @@
 package com.ecommerce.productservice.service.impl;
 
 import com.ecommerce.productservice.dto.*;
-import com.ecommerce.productservice.dto.response.ColourInfo;
-import com.ecommerce.productservice.dto.response.ProductListingResponse;
-import com.ecommerce.productservice.dto.response.ProductResponse;
-import com.ecommerce.productservice.dto.response.SizeInfo;
+import com.ecommerce.productservice.dto.response.*;
+import com.ecommerce.productservice.entity.Product;
 import com.ecommerce.productservice.entity.ProductStyleVariant;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
@@ -12,10 +10,13 @@ import com.ecommerce.productservice.repository.*;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 @Service
 
@@ -90,7 +91,7 @@ public class ProductGetServiceImpl implements ProductGetService {
                         res.setStyleVariants(getStyleVariants(productDto1.getProductId().toString(), null, null, null));
                         return res;
                     }).toList();
-        }else {
+        } else {
             productDto = productRepo.findProductById_Name(productName, productId).stream()
                     .map(productDto1 -> {
                         ProductResponse res = modelMapper.map(productDto1, ProductResponse.class);
@@ -102,6 +103,70 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     @Override
+    public Set<ProductListingResponse> getProductListing(String subCategoryName, String categoryName, String masterCategoryName, String brand, String gender) {
+
+        Set<ProductListingResponse> productListingResponse = new HashSet<>();
+
+        productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName, brand, gender)
+                .forEach(product -> {
+                            ProductListingResponse res = modelMapper.map(product, ProductListingResponse.class);
+                            getStyleVariants(product.getProductId().toString(), null, null, null)
+                                    .forEach(styleVariantDetailsDto -> {
+                                        res.setStyleId(styleVariantDetailsDto.getStyleId());
+                                        res.setStyleName(styleVariantDetailsDto.getStyleName());
+                                        res.setColour(styleVariantDetailsDto.getColour());
+                                        res.setMrp(styleVariantDetailsDto.getMrp());
+                                        res.setDiscountPercentage(styleVariantDetailsDto.getDiscountPercentage());
+                                        res.setFinalPrice(styleVariantDetailsDto.getFinalPrice());
+                                        res.setImages(styleVariantDetailsDto.getImages());
+                                        productListingResponse.add(res);
+                                    });
+                        }
+                );
+        return productListingResponse;
+    }
+
+    @Override
+    public ListingPageDetails getProductListingV2(String searchString, String sortBy, Integer page, Integer pageSize) {
+        List<ProductListingResponse> productListingResponse = new ArrayList<>();
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        Page<ProductStyleVariant> styleVariants = null;
+        String[] searchString2;
+        Integer price = null;
+        searchString=searchString.replaceAll("-"," ");
+        if (Pattern.compile("under (\\d+)").matcher(searchString).find()) {
+            searchString2 = searchString.split("under ");
+            searchString = searchString2[0];
+            price = Integer.parseInt(searchString2[1]);
+        }
+        if (sortBy.equalsIgnoreCase("HighToLow")) {
+            styleVariants = styleVariantRepo.findProductByfield(searchString, price, "psv.final_price DESC", pageRequest);
+        }
+        if (sortBy.equalsIgnoreCase("LowToHigh")) {
+            styleVariants = styleVariantRepo.findProductByfield(searchString, price, "psv.final_price ASC", pageRequest);
+        }
+        if (sortBy.equalsIgnoreCase("popularity")) {
+            styleVariants = styleVariantRepo.findProductByfield(searchString, price, "p.product_avg_rating DESC", pageRequest);
+        }
+        styleVariants.forEach(styleVariant -> {
+            AtomicBoolean flag = new AtomicBoolean(false);
+            getSizes(styleVariant.getStyleId()).forEach(size -> {
+                if (size.quantity() != null && size.quantity() > 0)
+                    flag.set(true);
+            });
+            ProductListingResponse res = modelMapper.map(styleVariant, ProductListingResponse.class);
+            Product product = productRepo.findById(res.getProductId()).get();
+            res.setBrand(product.getBrand());
+            res.setProductAvgRating(product.getProductAvgRating().toString());
+            res.setReviewCount(product.getReviewCount().toString());
+            res.setInStock(flag.get());
+            productListingResponse.add(res);
+
+        });
+        return new ListingPageDetails(productListingResponse, styleVariants.getTotalPages(), styleVariants.getTotalElements());
+    }
+
+    @Override
     public List<ReviewRating> getReview(UUID productId) {
         return reviewRatingRepo.findAllByProductId(productId);
     }
@@ -109,79 +174,60 @@ public class ProductGetServiceImpl implements ProductGetService {
     @Override
     public List<StyleVariantDetailsDto> getStyleVariants(String productId, String styleId, String size, String colour) {
 
-        return styleVariantRepo.findStyle(productId,styleId,size,colour).stream()
+        return styleVariantRepo.findStyle(productId, styleId, size, colour).stream()
                 .map(sku -> {
-                                sku.setSizeDetails(sku.getSizeDetails().stream().toList());
-                               StyleVariantDetailsDto styleVariantDetailsDto1 = modelMapper.map(sku, StyleVariantDetailsDto.class);
-                               styleVariantDetailsDto1.setProductId(sku.getProduct().getProductId());
-                               return styleVariantDetailsDto1;
+                    sku.setSizeDetails(sku.getSizeDetails().stream().toList());
+                    StyleVariantDetailsDto styleVariantDetailsDto1 = modelMapper.map(sku, StyleVariantDetailsDto.class);
+                    styleVariantDetailsDto1.setProductId(sku.getProduct().getProductId());
+                    return styleVariantDetailsDto1;
                 }).toList();
     }
 
     @Override
-    public List<SizeInfo> getSizes(String styleId){
+    public List<SizeInfo> getSizes(String styleId) {
         ProductStyleVariant productStyleVariant = styleVariantRepo.findById(styleId).orElseGet(ProductStyleVariant::new);
-        List<SizeInfo> sizes = new ArrayList<>() ;
-        if(!productStyleVariant.getSizeDetails().isEmpty()) {
+        List<SizeInfo> sizes = new ArrayList<>();
+        if (!productStyleVariant.getSizeDetails().isEmpty()) {
             productStyleVariant.getSizeDetails().forEach(sizeDetails -> {
-                    sizes.add(new SizeInfo(sizeDetails.getSizeId(),sizeDetails.getSize(),sizeDetails.getQuantity()));
+                sizes.add(new SizeInfo(sizeDetails.getSizeId(), sizeDetails.getSize(), sizeDetails.getQuantity()));
             });
         }
         return sizes;
     }
 
     @Override
-    public Set<ColourInfo> getColours(String productId){
-        List<ProductStyleVariant> productStyleVariantList = styleVariantRepo.findStyle(productId,null,null,null);
-        Set<ColourInfo> colourInfos=new HashSet<>();
-        if(!productStyleVariantList.isEmpty()){
+    public Set<ColourInfo> getColours(String productId) {
+        List<ProductStyleVariant> productStyleVariantList = styleVariantRepo.findStyle(productId, null, null, null);
+        Set<ColourInfo> colourInfos = new HashSet<>();
+        if (!productStyleVariantList.isEmpty()) {
             productStyleVariantList.forEach(psv -> {
-                AtomicBoolean flag= new AtomicBoolean(false);
+                AtomicBoolean flag = new AtomicBoolean(false);
                 getSizes(psv.getStyleId()).forEach(size -> {
-                    if (size.quantity()!= null && size.quantity() > 0)
+                    if (size.quantity() != null && size.quantity() > 0)
                         flag.set(true);
                 });
-                if(flag.get())
-                    colourInfos.add(new ColourInfo(psv.getStyleId(),psv.getColour(),psv.getImages().getDefaultImage(),true));
+                if (flag.get())
+                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(), psv.getImages().getDefaultImage(), true));
                 else
-                    colourInfos.add(new ColourInfo(psv.getStyleId(),psv.getColour(),psv.getImages().getDefaultImage(),false));
+                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(), psv.getImages().getDefaultImage(), false));
             });
         }
         return colourInfos;
     }
 
     @Override
-    public Set<ProductListingResponse> getProductListing(String subCategoryName, String categoryName, String masterCategoryName, String brand, String gender) {
-
-        Set<ProductListingResponse> productListingResponse = new HashSet<>();
-
-        productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName, brand, gender)
-                  .forEach(product -> {
-                        ProductListingResponse res = modelMapper.map(product,ProductListingResponse.class);
-                        getStyleVariants(product.getProductId().toString(), null, null, null)
-                                .forEach(styleVariantDetailsDto -> {
-                                    res.setSkuId(styleVariantDetailsDto.getStyleId());
-                                    res.setSkuName(styleVariantDetailsDto.getStyleName());
-                                    res.setColour(styleVariantDetailsDto.getColour());
-                                    res.setMrp(styleVariantDetailsDto.getMrp());
-                                    res.setDiscountPercentage(styleVariantDetailsDto.getDiscountPercentage());
-                                    res.setFinalPrice(styleVariantDetailsDto.getFinalPrice());
-                                    res.setImages(styleVariantDetailsDto.getImages());
-                                    productListingResponse.add(res);
-                                });
-                  }
-                );
-        return productListingResponse;
-    }
-
-    @Override
     public List<Warehouse> getWarehouse(Integer warehouseId) {
-        if(warehouseId!=null){
+        if (warehouseId != null) {
             return List.of(warehouseRepo.findById(warehouseId).orElseThrow());
-        }else{
+        } else {
             return warehouseRepo.findAll();
         }
-
     }
-}
 
+//    private List<BreadCrumb> getBreadCrumb(Product product) {
+//        List<BreadCrumb> breadCrumbs = new ArrayList<>();
+//        breadCrumbs.add(new BreadCrumb(product.getMasterCategory().getMasterCategoryName(),product.getMasterCategory().getBreadcrumbUrl()));
+//
+//        return breadCrumbs;`
+//    }
+}

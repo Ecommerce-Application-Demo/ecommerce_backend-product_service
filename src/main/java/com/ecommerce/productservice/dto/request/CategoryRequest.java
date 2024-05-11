@@ -15,5 +15,6 @@ public class CategoryRequest {
     private String categoryName;
     private String categoryDescription;
     private String categoryDefaultImage;
+    private String breadcrumbUrl;
     private MasterCategoryDto masterCategoryDto;
 }

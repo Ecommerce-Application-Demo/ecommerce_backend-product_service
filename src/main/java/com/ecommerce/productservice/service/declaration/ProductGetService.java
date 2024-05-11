@@ -32,4 +32,6 @@ public interface ProductGetService {
     Set<ProductListingResponse> getProductListing(String subCategoryName, String categoryName, String masterCategoryName, String brand, String gender);
 
     List<Warehouse> getWarehouse(Integer warehouseId);
+
+    ListingPageDetails getProductListingV2(String searchString, String sortBy, Integer page, Integer pageSize);
 }

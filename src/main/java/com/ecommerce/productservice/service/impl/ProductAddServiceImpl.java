@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -77,9 +78,9 @@ public class ProductAddServiceImpl implements ProductAddService {
     public ProductDto addProduct(ProductRequest productDto) {
         Product product=modelMapper.map(productDto, Product.class);
 
-        product.setProductAvgRating(reviewRatingRepo.findAvgRating(product.getProductId()).toString());
-        product.setReviewCount(reviewRatingRepo.findCountByProductId(product.getProductId()).toString());
-
+        product.setProductAvgRating(reviewRatingRepo.findAvgRating(product.getProductId()));
+        product.setReviewCount(reviewRatingRepo.findCountByProductId(product.getProductId()));
+        product.setCreatedTimestamp(LocalDateTime.now());
         product=productRepo.save(product);
         return modelMapper.map(product, ProductDto.class);
     }
@@ -90,8 +91,8 @@ public class ProductAddServiceImpl implements ProductAddService {
         Product product=productRepo.findById(reviewRating.getProductId()).orElse(null);
         if( product != null) {
             reviewRatingResponse = reviewRatingRepo.save(reviewRating);
-            product.setProductAvgRating(reviewRatingRepo.findAvgRating(product.getProductId()).toString());
-            product.setReviewCount(reviewRatingRepo.findCountByProductId(product.getProductId()).toString());
+            product.setProductAvgRating(reviewRatingRepo.findAvgRating(product.getProductId()));
+            product.setReviewCount(reviewRatingRepo.findCountByProductId(product.getProductId()));
             productRepo.save(product);
         }
         return reviewRatingResponse;
@@ -99,11 +100,16 @@ public class ProductAddServiceImpl implements ProductAddService {
 
     @Override
     public ProductStyleVariant addStyleVariant(StyleVariantRequest request){
+
         ProductStyleVariant productStyleVariant = modelMapper.map(request, ProductStyleVariant.class);
         productStyleVariant.setProduct(productRepo.findById(request.getProductId()).get());
+
         BigDecimal finalPrice = productStyleVariant.getMrp().subtract(productStyleVariant.getDiscountPercentage().multiply(productStyleVariant.getMrp()).divide(new BigDecimal(100), MathContext.DECIMAL128));
         productStyleVariant.setFinalPrice(finalPrice);
+
+        productStyleVariant.setCreatedTimeStamp(LocalDateTime.now());
         ProductStyleVariant response= styleVariantRepo.save(productStyleVariant);
+
         response.getSizeDetails().forEach(svd -> svd.setSizeId(response.getStyleId()+"_"+svd.getSize()));
         return styleVariantRepo.save(response);
     }

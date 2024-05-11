@@ -13,7 +13,7 @@ public class BrandDto {
     private UUID brandId;
     private String brandName;
     private String brandDescription;
-    private String brandDefaultImage;
+    private String brandLogoImage;
     private String brandAddress;
 
 }

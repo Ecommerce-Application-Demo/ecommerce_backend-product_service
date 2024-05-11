@@ -1,5 +1,6 @@
 package com.ecommerce.productservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -23,7 +24,8 @@ public class Brand {
 	@Column(length = 500)
 	private String brandDescription;
 	private String brandAddress;
-	private String brandDefaultImage;
+	private String brandLogoImage;
 	@OneToMany(mappedBy = "brand")
+	@JsonIgnore
 	private List<Product> productId;
 }

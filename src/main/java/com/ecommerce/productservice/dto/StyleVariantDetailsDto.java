@@ -16,6 +16,7 @@ public class StyleVariantDetailsDto {
     private String styleId;
     private String styleName;
     private String colour;
+    private String colourHexCode;
     private BigDecimal mrp;
     private BigDecimal discountPercentage;
     private BigDecimal finalPrice;

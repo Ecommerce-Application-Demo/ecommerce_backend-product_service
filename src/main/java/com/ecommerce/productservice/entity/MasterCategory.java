@@ -20,6 +20,7 @@ public class MasterCategory {
 	@Column(length = 500)
 	private String masterCategoryDescription;
 	private String masterCategoryDefaultImage;
+	private String breadcrumbUrl;
 	@OneToMany(mappedBy = "masterCategory",cascade = CascadeType.ALL)
 	private List<Category> category;
 	@OneToMany(mappedBy = "masterCategory",cascade = CascadeType.ALL)

@@ -13,4 +13,5 @@ public class SubCategoryDto {
     private String SubCategoryName;
     private String SubCategoryDescription;
     private String subCategoryDefaultImage;
+    private String breadcrumbUrl;
 }

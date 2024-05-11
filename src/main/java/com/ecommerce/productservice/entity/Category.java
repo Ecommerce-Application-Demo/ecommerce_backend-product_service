@@ -21,6 +21,7 @@ public class Category {
 	@Column(length = 500)
 	private String categoryDescription;
 	private String categoryDefaultImage;
+	private String breadcrumbUrl;
 	@ManyToOne
 	@JoinColumn(name = "category_master_category")
 	private MasterCategory masterCategory;

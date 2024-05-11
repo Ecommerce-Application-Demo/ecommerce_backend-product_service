@@ -15,10 +15,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/add")
+@Validated
 public class ProductAddController {
 
     @Autowired
@@ -85,7 +88,7 @@ public class ProductAddController {
                             schema = @Schema(implementation = ProductDto.class)) }),
     })
     @PostMapping("/product")
-    public ResponseEntity<ProductDto> addProduct(@RequestBody ProductRequest productDto){
+    public ResponseEntity<ProductDto> addProduct(@RequestBody @Valid ProductRequest productDto){
         return new ResponseEntity<>(productService.addProduct(productDto), HttpStatus.OK);
     }
 

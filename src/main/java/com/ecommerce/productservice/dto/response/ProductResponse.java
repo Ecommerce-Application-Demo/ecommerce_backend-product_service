@@ -20,6 +20,7 @@ public class ProductResponse {
     private String reviewCount;
     private String gender;
     private String material;
+    private String breadcrumbUrl;
     private MasterCategoryDto masterCategory;
     private CategoryDto category;
     private SubCategoryDto SubCategory;

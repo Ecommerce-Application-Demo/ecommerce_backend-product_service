@@ -6,6 +6,7 @@ import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -82,7 +83,7 @@ public class ProductGetController {
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ProductResponse.class)) }),
     })
-    @GetMapping("/product")
+    @GetMapping("/v1/product")
     public ResponseEntity<List<ProductResponse>> getProduct(
                                                  @RequestParam(required = false) String productId,
                                                  @RequestParam(required = false) String productName,
@@ -97,14 +98,14 @@ public class ProductGetController {
                                                      masterCategoryName,brand,gender), HttpStatus.OK);
     }
 
-    @Operation(summary = "To get Product details for Product Listing Page")
+    @Operation(summary = "To get Product details for Product Listing Page with Parameters")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product with required info only",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ProductListingResponse.class)) })
     })
-    @GetMapping("/product/listing")
-    public ResponseEntity<Set<ProductListingResponse>> getProductListing(
+    @GetMapping("/v1/product/listing")
+    public ResponseEntity<Set<ProductListingResponse>> getProductListingV1(
                                                 @RequestParam(required = false) String subCategoryName,
                                                 @RequestParam(required = false) String categoryName,
                                                 @RequestParam(required = false) String masterCategoryName,
@@ -113,6 +114,25 @@ public class ProductGetController {
     {
         return new ResponseEntity<>(productService.getProductListing(subCategoryName,categoryName,
                                                             masterCategoryName,brand,gender), HttpStatus.OK);
+    }
+
+    @Operation(summary = "To get Product details for Product Listing Page with any string")
+    @Parameter(name = "pageNumber",description = "Number of the page to return")
+    @Parameter(name = "numberOfItem",description = "Number of item of the page to return")
+    @Parameter(name = "sortBy", description = "Sort results by 'popularity', 'HighToLow' & 'LowToHigh' price")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product with required info only",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ListingPageDetails.class)) })
+    })
+    @GetMapping("/v2/product/{searchString}")
+    public ResponseEntity<ListingPageDetails> getProductListingV2(
+            @PathVariable(value = "searchString") String searchString,
+            @RequestParam(required = false,defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false,defaultValue = "10") Integer numberOfItem,
+            @RequestParam(required = false,defaultValue = "popularity") String sortBy)
+    {
+        return new ResponseEntity<>(productService.getProductListingV2(searchString,sortBy,pageNumber,numberOfItem), HttpStatus.OK);
     }
 
     @Operation(summary = "To get Review")

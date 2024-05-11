@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,11 +23,13 @@ public class Product {
 	private String productName;
 	@Column(length = 1000)
 	private String productDescription;
-	private String productAvgRating;
-	private String reviewCount;
+	private Float productAvgRating;
+	private Long reviewCount;
 	private String gender;
-	@Column(length = 1000)
+	@JdbcTypeCode(SqlTypes.JSON)
+	@Column(columnDefinition = "jsonb")
 	private String material;
+	private LocalDateTime createdTimestamp;
 	@ManyToOne
 	@JoinColumn(name = "product_master_category")
 	private MasterCategory masterCategory;
