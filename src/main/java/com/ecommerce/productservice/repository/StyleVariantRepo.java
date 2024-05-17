@@ -15,7 +15,7 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
     @Query(value = "SELECT s.* FROM product.product_style_variant s " +
             "LEFT OUTER JOIN product.product p ON s.psv_product = p.product_id " +
             "LEFT OUTER JOIN product.size_details sd ON s.style_id = sd.psv_id "+
-            "WHERE (?1 IS NULL OR p.product_id = CAST(?1 AS UUID)) " +
+            "WHERE (?1 IS NULL OR p.product_id = ?1) " +
             "AND (?2 IS NULL OR sd.style_id = ?2 ) " +
             "AND (?3 IS NULL OR sd.size = ?3)"+
             "AND (?4 IS NULL OR s.colour = ?4) " +

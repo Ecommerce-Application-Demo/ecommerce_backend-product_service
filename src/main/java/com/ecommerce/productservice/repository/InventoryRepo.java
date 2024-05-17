@@ -6,9 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 
 import java.util.List;
-import java.util.UUID;
 
-public interface InventoryRepo extends ListCrudRepository<Inventory, UUID> {
+public interface InventoryRepo extends ListCrudRepository<Inventory, String> {
 
     List<Inventory> findBySizeVariantId(String sizeVariantId);
 

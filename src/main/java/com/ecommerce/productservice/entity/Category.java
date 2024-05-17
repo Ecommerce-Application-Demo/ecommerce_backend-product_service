@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -14,14 +13,13 @@ import java.util.UUID;
 @Entity
 public class Category {
 
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID categoryId;
+	private String categoryId;
 	@Id
 	private String categoryName;
 	@Column(length = 500)
 	private String categoryDescription;
 	private String categoryDefaultImage;
-	private String breadcrumbUrl;
+	private String cBreadcrumbUrl;
 	@ManyToOne
 	@JoinColumn(name = "category_master_category")
 	private MasterCategory masterCategory;

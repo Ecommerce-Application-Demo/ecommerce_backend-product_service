@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -142,7 +141,7 @@ public class ProductGetController {
                             schema = @Schema(implementation = ReviewRating.class)) }),
     })
     @GetMapping("/review/{productid}")
-    public ResponseEntity<List<ReviewRating>> getReview(@PathVariable(name = "productid") UUID productId){
+    public ResponseEntity<List<ReviewRating>> getReview(@PathVariable(name = "productid") String productId){
         return new ResponseEntity<>(productService.getReview(productId), HttpStatus.OK);
     }
 

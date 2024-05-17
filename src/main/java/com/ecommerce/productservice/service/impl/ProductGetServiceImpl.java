@@ -110,7 +110,7 @@ public class ProductGetServiceImpl implements ProductGetService {
         productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName, brand, gender)
                 .forEach(product -> {
                             ProductListingResponse res = modelMapper.map(product, ProductListingResponse.class);
-                            getStyleVariants(product.getProductId().toString(), null, null, null)
+                            getStyleVariants(product.getProductId(), null, null, null)
                                     .forEach(styleVariantDetailsDto -> {
                                         res.setStyleId(styleVariantDetailsDto.getStyleId());
                                         res.setStyleName(styleVariantDetailsDto.getStyleName());
@@ -167,7 +167,7 @@ public class ProductGetServiceImpl implements ProductGetService {
     }
 
     @Override
-    public List<ReviewRating> getReview(UUID productId) {
+    public List<ReviewRating> getReview(String productId) {
         return reviewRatingRepo.findAllByProductId(productId);
     }
 

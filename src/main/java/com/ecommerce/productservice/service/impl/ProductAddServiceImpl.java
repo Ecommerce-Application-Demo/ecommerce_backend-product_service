@@ -49,28 +49,28 @@ public class ProductAddServiceImpl implements ProductAddService {
     @Override
     public MasterCategoryDto addMasterCategory(MasterCategoryDto masterCategoryDto) {
         MasterCategory masterCategory = modelMapper.map(masterCategoryDto, MasterCategory.class);
-        masterCategory.setMasterCategoryId(UUID.randomUUID());
+        masterCategory.setMasterCategoryId(UUID.randomUUID().toString());
          return modelMapper.map(masterCategoryRepo.save(masterCategory), MasterCategoryDto.class);
     }
 
     @Override
     public CategoryDto addCategory(CategoryRequest categoryRequest) {
         Category category = modelMapper.map(categoryRequest, Category.class);
-        category.setCategoryId(UUID.randomUUID());
+        category.setCategoryId(UUID.randomUUID().toString());
         return modelMapper.map(categoryRepo.save(category), CategoryDto.class) ;
     }
 
     @Override
     public SubCategoryDto addSubCategory(SubCategoryRequest subCategoryDto) {
         SubCategory subCategory = modelMapper.map(subCategoryDto, SubCategory.class);
-        subCategory.setSubCategoryId(UUID.randomUUID());
+        subCategory.setSubCategoryId(UUID.randomUUID().toString());
         return modelMapper.map(subCategoryRepo.save(subCategory),SubCategoryDto.class);
     }
 
     @Override
     public BrandDto addBrand(BrandDto brandDto) {
         Brand brand = modelMapper.map(brandDto, Brand.class);
-        brand.setBrandId(UUID.randomUUID());
+        brand.setBrandId(UUID.randomUUID().toString());
         return modelMapper.map(brandRepo.save(brand), BrandDto.class);
     }
 

@@ -7,7 +7,6 @@ import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 public interface ProductGetService {
 
@@ -21,7 +20,7 @@ public interface ProductGetService {
 
     List<ProductResponse> getProduct(String productId, String productName, String subCategoryName, String categoryName, String masterCategoryName, String brand, String gender);
 
-    List<ReviewRating> getReview(UUID productId);
+    List<ReviewRating> getReview(String productId);
 
     List<StyleVariantDetailsDto> getStyleVariants(String productId, String styleId, String size, String colour );
 

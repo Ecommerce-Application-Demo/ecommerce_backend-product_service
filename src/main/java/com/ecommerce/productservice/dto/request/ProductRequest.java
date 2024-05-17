@@ -9,13 +9,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductRequest {
-    private UUID productId;
+    private String productId;
     @NotNull
     private String productName;
     @NotNull

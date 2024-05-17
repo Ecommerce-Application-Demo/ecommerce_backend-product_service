@@ -14,13 +14,13 @@ import java.util.UUID;
 @Entity
 public class MasterCategory {
 
-	private UUID masterCategoryId;
+	private String masterCategoryId;
 	@Id
 	private String masterCategoryName;
 	@Column(length = 500)
 	private String masterCategoryDescription;
 	private String masterCategoryDefaultImage;
-	private String breadcrumbUrl;
+	private String mcBreadcrumbUrl;
 	@OneToMany(mappedBy = "masterCategory",cascade = CascadeType.ALL)
 	private List<Category> category;
 	@OneToMany(mappedBy = "masterCategory",cascade = CascadeType.ALL)

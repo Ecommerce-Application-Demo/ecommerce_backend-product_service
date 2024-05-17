@@ -5,9 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
-import java.util.UUID;
 
-public interface ProductRepo extends CrudRepository<Product, UUID> {
+public interface ProductRepo extends CrudRepository<Product, String> {
 
     @Query(value = "SELECT p.* " +
             "FROM product.product p " +
@@ -27,7 +26,7 @@ public interface ProductRepo extends CrudRepository<Product, UUID> {
     @Query(value = "SELECT * " +
             "FROM product.product " +
             "WHERE (?1 IS NULL OR product_name = ?1 ) " +
-            "AND (?2 IS NULL OR product_id = CAST(?2 AS UUID)) ", nativeQuery = true)
+            "AND (?2 IS NULL OR product_id = ?2) ", nativeQuery = true)
     List<Product> findProductById_Name(String productName, String productId);
 
 }

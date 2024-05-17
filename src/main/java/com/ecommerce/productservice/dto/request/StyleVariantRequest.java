@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -20,5 +19,5 @@ public class StyleVariantRequest {
     private BigDecimal discountPercentage;
     private Images images;
     private List<SizeDetails> sizeDetails;
-    private UUID productId;
+    private String productId;
 }

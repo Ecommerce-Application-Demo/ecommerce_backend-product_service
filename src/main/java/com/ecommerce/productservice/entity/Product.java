@@ -9,7 +9,6 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -19,7 +18,7 @@ public class Product {
 
 	@Id
 	@GeneratedValue(strategy =GenerationType.UUID )
-	private UUID productId;
+	private String productId;
 	private String productName;
 	@Column(length = 1000)
 	private String productDescription;

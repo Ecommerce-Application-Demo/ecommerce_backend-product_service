@@ -1,32 +1,44 @@
 package com.ecommerce.productservice.exceptionhandler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleUniqueConstraintViolation(DataIntegrityViolationException ex) {
-        String errorMessage = "Unique constraint violation";
-        if (ex.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
-            String constraintName = ((ConstraintViolationException) ex.getCause()).getConstraintName();
-            errorMessage = "Violation of unique constraint '" + constraintName + "'";
-            log.error(errorMessage, ex);
-        }
-        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> productException(ProductException ex) {
+        ErrorCode ec = ErrorCode.valueOf(ex.getMessage());
+        ErrorResponse response = new ErrorResponse(ec.getErrorMessage(),ec.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(ec.getHttpStatusCode()));
+
     }
 
     @ExceptionHandler
-    public ResponseEntity<String> allOtherException(Exception ex) {
-        log.warn(ex.getMessage(),ex);
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ErrorResponse> allOtherException(Exception ex) {
+        log.error(ex.getMessage());
+        ErrorResponse response = new ErrorResponse(ErrorCode.GENERAL_EXCEPTION.getErrorMessage(), ErrorCode.GENERAL_EXCEPTION.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<List<ErrorResponse>> handleValidationException(MethodArgumentNotValidException ex) {
+        List<ErrorResponse> exception=new ArrayList<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->{
+            ErrorCode ec = ErrorCode.valueOf(error.getDefaultMessage());
+            ErrorResponse response = new ErrorResponse(ec.getErrorMessage(),ec.getErrorCode());
+            exception.add(response);
+        });
+        return new ResponseEntity<>(exception,HttpStatus.BAD_REQUEST) ;
     }
 }

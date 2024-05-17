@@ -9,8 +9,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @Transactional
 public class ProductDeleteServiceImpl implements ProductDeleteService {
@@ -40,7 +38,7 @@ public class ProductDeleteServiceImpl implements ProductDeleteService {
     }
 
     @Override
-    public void deleteProduct(UUID productId) {
+    public void deleteProduct(String productId) {
         productRepo.findById(productId).get().getProductStyleVariant()
                 .forEach(psv -> deleteStyle(psv.getStyleId()));
         productRepo.deleteById(productId);

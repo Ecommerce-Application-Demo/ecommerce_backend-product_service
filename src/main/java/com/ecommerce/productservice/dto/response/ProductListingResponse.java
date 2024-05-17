@@ -7,14 +7,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductListingResponse {
 
-    private UUID productId;
+    private String productId;
     private String productAvgRating;
     private String reviewCount;
     private Brand brand;
