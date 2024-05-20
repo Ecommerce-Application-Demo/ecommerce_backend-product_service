@@ -39,7 +39,7 @@ public class ProductSearchController {
                             schema = @Schema(implementation = ListingPageDetails.class)) })
     })
     @GetMapping("/product/listing")
-    public ResponseEntity<ListingPageDetails> getProductListingV1(
+    public ResponseEntity<ListingPageDetails> getProductListingParameters(
             @RequestParam(required = false) String masterCategoryName,
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) String subCategoryName,
@@ -54,7 +54,7 @@ public class ProductSearchController {
             @RequestParam(required = false,defaultValue = "10") Integer numberOfItem,
             @RequestParam(required = false,defaultValue = "popularity") String sortBy)
     {
-        return new ResponseEntity<>(productService.getProductListing(masterCategoryName,categoryName,subCategoryName,brand,
+        return new ResponseEntity<>(productService.getProductListingParameters(masterCategoryName,categoryName,subCategoryName,brand,
                 gender,colour,size,discountPercentage,minPrice,maxPrice,sortBy,pageNumber,numberOfItem), HttpStatus.OK);
     }
 
@@ -70,13 +70,13 @@ public class ProductSearchController {
                             schema = @Schema(implementation = ListingPageDetails.class)) })
     })
     @GetMapping("/product/listing/{searchString}")
-    public ResponseEntity<ListingPageDetails> getProductListingV2(
+    public ResponseEntity<ListingPageDetails> getProductListingSearchString(
             @PathVariable(value = "searchString") String searchString,
             @RequestParam(required = false,defaultValue = "0") Integer pageNumber,
             @RequestParam(required = false,defaultValue = "10") Integer numberOfItem,
             @RequestParam(required = false,defaultValue = "popularity") String sortBy)
     {
-        return new ResponseEntity<>(productService.getProductListingV2(searchString,sortBy,pageNumber,numberOfItem), HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProductListingSearchString(searchString,sortBy,pageNumber,numberOfItem), HttpStatus.OK);
     }
 
 

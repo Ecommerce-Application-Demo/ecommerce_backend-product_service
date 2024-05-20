@@ -1,7 +1,9 @@
 package com.ecommerce.productservice.service.impl;
 
 import com.ecommerce.productservice.dto.*;
+import com.ecommerce.productservice.dto.response.BreadCrumb;
 import com.ecommerce.productservice.dto.response.ProductResponse;
+import com.ecommerce.productservice.entity.Product;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
 import com.ecommerce.productservice.repository.*;
@@ -10,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -78,25 +81,31 @@ public class ProductGetServiceImpl implements ProductGetService {
     public List<ProductResponse> getProduct(String productId, String productName, String subCategoryName,
                                             String categoryName, String masterCategoryName, String brand, String gender) {
         List<ProductResponse> productDto;
+        List<BreadCrumb> breadCrumbs = new ArrayList<>();
         if (masterCategoryName != null || subCategoryName != null || categoryName != null || brand != null || gender != null) {
             productDto = productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName, brand, gender).stream()
                     .map(productDto1 -> {
                         ProductResponse res = modelMapper.map(productDto1, ProductResponse.class);
                         res.setStyleVariants(getStyleVariants(productDto1.getProductId().toString(), null, null, null));
+                        breadCrumbs.addAll(getBreadCrumb(productDto1));
+                        breadCrumbs.add((new BreadCrumb(productDto1.getProductName(),null)));
+                        res.setBreadCrumbs(breadCrumbs);
                         return res;
                     }).toList();
         } else {
             productDto = productRepo.findProductById_Name(productName, productId).stream()
                     .map(productDto1 -> {
                         ProductResponse res = modelMapper.map(productDto1, ProductResponse.class);
-                        res.setStyleVariants(getStyleVariants(productDto1.getProductId().toString(), null, null, null));
+                        res.setStyleVariants(getStyleVariants(productDto1.getProductId(), null, null, null));
+                        getBreadCrumb(productDto1).add(new BreadCrumb(productDto1.getProductName(),null));
+                        breadCrumbs.addAll(getBreadCrumb(productDto1));
+                        breadCrumbs.add((new BreadCrumb(productDto1.getProductName(),null)));
+                        res.setBreadCrumbs(breadCrumbs);
                         return res;
                     }).toList();
         }
         return productDto;
     }
-
-
 
     @Override
     public List<ReviewRating> getReview(String productId) {
@@ -124,10 +133,14 @@ public class ProductGetServiceImpl implements ProductGetService {
         }
     }
 
-//    private List<BreadCrumb> getBreadCrumb(Product product) {
-//        List<BreadCrumb> breadCrumbs = new ArrayList<>();
-//        breadCrumbs.add(new BreadCrumb(product.getMasterCategory().getMasterCategoryName(),product.getMasterCategory().getBreadcrumbUrl()));
-//
-//        return breadCrumbs;`
-//    }
+    protected List<BreadCrumb> getBreadCrumb(Product product) {
+        List<BreadCrumb> breadCrumbs = new ArrayList<>();
+        if (product.getMasterCategory() != null)
+            breadCrumbs.add(new BreadCrumb(product.getMasterCategory().getMasterCategoryName(), product.getMasterCategory().getMcBreadcrumbUrl()));
+        if (product.getCategory() != null)
+            breadCrumbs.add(new BreadCrumb(product.getCategory().getCategoryName(), product.getCategory().getCBreadcrumbUrl()));
+        if (product.getSubCategory() != null)
+            breadCrumbs.add(new BreadCrumb(product.getSubCategory().getSubCategoryName(), product.getSubCategory().getScBreadcrumbUrl()));
+        return breadCrumbs;
+    }
 }

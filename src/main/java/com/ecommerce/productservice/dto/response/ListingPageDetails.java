@@ -1,7 +1,18 @@
 package com.ecommerce.productservice.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
-public record ListingPageDetails(List<ProductListingResponse> responseList, int totalPages, long totalElements,
-                                 boolean hasNextPage) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ListingPageDetails{
+        List<ProductListingResponse> responseList;
+        List<BreadCrumb> breadCrumbs;
+        int totalPages;
+        long totalElements;
+        boolean hasNextPage;
 }

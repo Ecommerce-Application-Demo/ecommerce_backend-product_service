@@ -14,11 +14,11 @@ public interface ProductSearchService {
 
     Set<ColourInfo> getColours(String productId);
 
-    ListingPageDetails getProductListing(String masterCategoryName, String categoryName, String subCategoryName,String brand,
+    ListingPageDetails getProductListingParameters(String masterCategoryName, String categoryName, String subCategoryName,String brand,
                                          String gender, String colour, String size, Integer discountPercentage,
                                          Integer minPrice, Integer maxPrice, String sortBy,Integer pageNumber, Integer pageSize);
 
-    ListingPageDetails getProductListingV2(String searchString, String sortBy, Integer page, Integer pageSize);
+    ListingPageDetails getProductListingSearchString(String searchString, String sortBy, Integer page, Integer pageSize);
 
     ProductFilters getProductFilters(String searchString);
 }

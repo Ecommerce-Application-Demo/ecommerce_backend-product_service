@@ -19,6 +19,7 @@ public class RequestHeaderValidatorConfig implements WebMvcConfigurer {
 
     String[] publicURL= {
             "/get/**",
+            "/helper/**",
             "/actuator/**",
             "/v3/api-docs","/swagger-ui/**","/swagger-ui.html","/swagger-resources/**","/v3/api-docs/**",
             "/swagger-ui/**","/swagger-ui/","/swagger-ui"

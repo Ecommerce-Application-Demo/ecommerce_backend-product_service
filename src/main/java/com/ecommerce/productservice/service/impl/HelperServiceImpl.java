@@ -4,6 +4,8 @@ import com.ecommerce.productservice.dto.response.DeliveryTimeDetails;
 import com.ecommerce.productservice.entity.PincodeDetails;
 import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
+import com.ecommerce.productservice.exceptionhandler.ErrorCode;
+import com.ecommerce.productservice.exceptionhandler.ProductException;
 import com.ecommerce.productservice.repository.InventoryRepo;
 import com.ecommerce.productservice.repository.PincodeRepo;
 import com.ecommerce.productservice.service.declaration.HelperService;
@@ -17,6 +19,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class HelperServiceImpl implements HelperService {
+
+    @Value("${api.secret}")
+    private String apiSecret;
 
     @Autowired
     PincodeRepo pincodeRepo;
@@ -64,6 +69,13 @@ public class HelperServiceImpl implements HelperService {
         return timeDetailsList;
     }
 
+    @Override
+    public Boolean validateApiKey(String secret) throws ProductException {
+        if(secret.equals(apiSecret))
+            return true;
+        else
+            throw new ProductException(ErrorCode.INVALID_API_SECRET.name());
+    }
 
     public Map<Warehouse,Integer> distanceFromWarehouse(String pincode, List<Warehouse> warehouseList) {
 

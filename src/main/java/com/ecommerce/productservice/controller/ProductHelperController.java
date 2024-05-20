@@ -2,6 +2,7 @@ package com.ecommerce.productservice.controller;
 
 import com.ecommerce.productservice.dto.response.DeliveryTimeDetails;
 import com.ecommerce.productservice.entity.Images;
+import com.ecommerce.productservice.exceptionhandler.ProductException;
 import com.ecommerce.productservice.repository.PincodeRepo;
 import com.ecommerce.productservice.service.declaration.HelperService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -68,6 +69,18 @@ public class ProductHelperController {
         }
     }
 
-
+    @Operation(summary = "Validate given API secret")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "true",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Boolean.class)) }),
+            @ApiResponse(responseCode = "400", description = "API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))})
+    })
+    @GetMapping("/api-secret")
+    public ResponseEntity<Boolean> apiKeyValidation(@RequestBody String apiSecret) throws ProductException {
+       return new ResponseEntity<>(helperService.validateApiKey(apiSecret), HttpStatus.OK);
+    }
 }
 

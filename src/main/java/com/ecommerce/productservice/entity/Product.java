@@ -24,7 +24,8 @@ public class Product {
 	private String productDescription;
 	private Float productAvgRating;
 	private Long reviewCount;
-	private String gender;
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(columnDefinition = "jsonb")
 	private Materials material;

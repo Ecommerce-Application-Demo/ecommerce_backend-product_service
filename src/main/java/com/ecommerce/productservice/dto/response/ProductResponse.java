@@ -1,6 +1,7 @@
 package com.ecommerce.productservice.dto.response;
 
 import com.ecommerce.productservice.dto.*;
+import com.ecommerce.productservice.entity.Gender;
 import com.ecommerce.productservice.entity.Materials;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,12 +19,13 @@ public class ProductResponse {
     private String productDescription;
     private String productAvgRating;
     private String reviewCount;
-    private String gender;
+    private Gender gender;
     private Materials material;
     private String breadcrumbUrl;
     private MasterCategoryDto masterCategory;
     private CategoryDto category;
     private SubCategoryDto SubCategory;
     private BrandDto brand;
+    private List<BreadCrumb> breadCrumbs;
     private List<StyleVariantDetailsDto> styleVariants;
 }
