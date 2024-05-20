@@ -4,6 +4,7 @@ import com.ecommerce.productservice.dto.BrandDto;
 import com.ecommerce.productservice.dto.CategoryDto;
 import com.ecommerce.productservice.dto.MasterCategoryDto;
 import com.ecommerce.productservice.dto.SubCategoryDto;
+import com.ecommerce.productservice.entity.Materials;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +23,7 @@ public class ProductRequest {
     @NotNull
     private String gender;
     @NotNull
-    private String material;
+    private Materials material;
     @NotNull
     private MasterCategoryDto masterCategory;
     @NotNull

@@ -1,14 +1,16 @@
 package com.ecommerce.productservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
-import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -21,10 +23,13 @@ public class MasterCategory {
 	private String masterCategoryDescription;
 	private String masterCategoryDefaultImage;
 	private String mcBreadcrumbUrl;
+	@JsonIgnore
 	@OneToMany(mappedBy = "masterCategory",cascade = CascadeType.ALL)
 	private List<Category> category;
+	@JsonIgnore
 	@OneToMany(mappedBy = "masterCategory",cascade = CascadeType.ALL)
 	private List<SubCategory> SubCategory;
+	@JsonIgnore
 	@OneToMany(mappedBy = "masterCategory",cascade = CascadeType.ALL)
 	private List<Product> product;
 	

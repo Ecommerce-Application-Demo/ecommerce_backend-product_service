@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -29,6 +30,7 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/add")
 @Validated
+@Tag(name = "Product Add Controller",description = "REST APIs for Adding Products,Categories,inventory,warehouses into database. Protected with API Key-Secret")
 public class ProductAddController {
 
     @Autowired

@@ -1,12 +1,11 @@
 package com.ecommerce.productservice.service.declaration;
 
 import com.ecommerce.productservice.dto.*;
-import com.ecommerce.productservice.dto.response.*;
+import com.ecommerce.productservice.dto.response.ProductResponse;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
 
 import java.util.List;
-import java.util.Set;
 
 public interface ProductGetService {
 
@@ -24,13 +23,6 @@ public interface ProductGetService {
 
     List<StyleVariantDetailsDto> getStyleVariants(String productId, String styleId, String size, String colour );
 
-    List<SizeInfo> getSizes(String styleId);
-
-    Set<ColourInfo> getColours(String productId);
-
-    Set<ProductListingResponse> getProductListing(String subCategoryName, String categoryName, String masterCategoryName, String brand, String gender);
-
     List<Warehouse> getWarehouse(Integer warehouseId);
 
-    ListingPageDetails getProductListingV2(String searchString, String sortBy, Integer page, Integer pageSize);
 }

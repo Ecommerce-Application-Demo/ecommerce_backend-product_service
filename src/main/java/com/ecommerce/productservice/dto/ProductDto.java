@@ -1,5 +1,6 @@
 package com.ecommerce.productservice.dto;
 
+import com.ecommerce.productservice.entity.Materials;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ public class ProductDto {
     private Float productAvgRating;
     private Long reviewCount;
     private String gender;
-    private String material;
+    private Materials material;
     private String breadcrumbUrl;
     private MasterCategoryDto masterCategory;
     private CategoryDto category;

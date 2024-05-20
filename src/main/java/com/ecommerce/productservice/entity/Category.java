@@ -1,13 +1,13 @@
 package com.ecommerce.productservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -23,8 +23,10 @@ public class Category {
 	@ManyToOne
 	@JoinColumn(name = "category_master_category")
 	private MasterCategory masterCategory;
+	@JsonIgnore
 	@OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
 	private List<SubCategory> SubCategory;
+	@JsonIgnore
 	@OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
 	private List<Product> product;
 }

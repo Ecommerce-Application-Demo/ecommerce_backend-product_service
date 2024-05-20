@@ -25,5 +25,6 @@ public class ProductListingResponse {
     private BigDecimal discountPercentage;
     private BigDecimal finalPrice;
     private Images images;
+    private String defaultImage;
     private boolean isInStock;
 }

@@ -25,8 +25,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> allOtherException(Exception ex) {
-        log.error(ex.getMessage());
-        ErrorResponse response = new ErrorResponse(ErrorCode.GENERAL_EXCEPTION.getErrorMessage(), ErrorCode.GENERAL_EXCEPTION.getErrorCode());
+        log.error(ex.getMessage(),ex);
+        ErrorResponse response = new ErrorResponse(ErrorCode.GENERAL_EXCEPTION.getErrorMessage()
+                +", [ "+ex.getMessage()+" ]", ErrorCode.GENERAL_EXCEPTION.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 
     }

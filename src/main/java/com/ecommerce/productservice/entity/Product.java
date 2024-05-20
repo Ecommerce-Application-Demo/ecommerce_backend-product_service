@@ -1,16 +1,16 @@
 package com.ecommerce.productservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -27,7 +27,7 @@ public class Product {
 	private String gender;
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(columnDefinition = "jsonb")
-	private String material;
+	private Materials material;
 	private LocalDateTime createdTimestamp;
 	@ManyToOne
 	@JoinColumn(name = "product_master_category")
@@ -41,6 +41,7 @@ public class Product {
 	@ManyToOne
 	@JoinColumn(name = "product_brand")
 	private Brand brand;
+	@JsonIgnore
 	@OneToMany(mappedBy = "product")
 	private List<ProductStyleVariant> productStyleVariant;
 }

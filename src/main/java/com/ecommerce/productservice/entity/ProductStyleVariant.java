@@ -1,10 +1,7 @@
 package com.ecommerce.productservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -13,7 +10,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -39,6 +37,5 @@ public class ProductStyleVariant {
 	private LocalDateTime createdTimeStamp;
 	@ManyToOne
 	@JoinColumn(name = "psv_product")
-	@JsonIgnore
 	private Product product;
 }
