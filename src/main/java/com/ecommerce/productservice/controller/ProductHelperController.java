@@ -83,6 +83,7 @@ public class ProductHelperController {
        return new ResponseEntity<>(helperService.validateApiKey(apiSecret), HttpStatus.OK);
     }
 
+    @Operation(summary = "Unauthenticated index API")
     @GetMapping("/index")
     public String index(){
         return "From Product Service";

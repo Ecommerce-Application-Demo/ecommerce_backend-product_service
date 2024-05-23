@@ -42,7 +42,6 @@ public class Config {
         if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getForEntity("https://ecommerce-backend-product-service.onrender.com/product/actuator/info", String.class);
-            System.out.println("================ H E LL O   WORLD =======================");
         }
     }
 }
