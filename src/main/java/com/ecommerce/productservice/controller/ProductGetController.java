@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/get")
-@Tag(name = "Product Get Controller",description = "APIs for getting All or individual categories & product details. ")
+@Tag(name = "2. Product Get Controller",description = "APIs for getting All or individual categories & product details. ")
 public class ProductGetController {
 
     @Autowired

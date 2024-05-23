@@ -67,4 +67,17 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
             "AND (?2 IS NULL OR psv.final_price <= ?2) ",nativeQuery = true)
     List<ProductStyleVariant> findProductFilters(String searchInput,Integer price);
 
+
+    @Query(value = "SELECT s.* FROM product.product_style_variant s " +
+            "LEFT OUTER JOIN product.product p ON s.psv_product = p.product_id " +
+            "LEFT OUTER JOIN product.size_details sd ON s.style_id = sd.psv_id "+
+            "WHERE (p.product_master_category = ?1 OR ?1 IS NULL) "+
+            "AND (p.product_category = ?2 OR ?2 IS NULL) " +
+            "AND (p.product_sub_category = ?3 OR ?3 IS NULL) " +
+            "AND (p.product_brand = ?4 OR ?4 IS NULL) " +
+            "AND (p.gender = ?5 OR ?5 IS NULL) " +
+            "AND (s.colour = ?6 OR ?6 IS NULL) " +
+            "AND (s.discount_percentage >= ?7 OR ?7 IS NULL)",nativeQuery = true)
+    List<ProductStyleVariant> findProductFiltersWithParameter(String masterCategoryName, String categoryName, String subCategoryName,
+                                                              String brand, String gender, String colour, Integer discountPercentage);
 }

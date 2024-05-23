@@ -21,4 +21,6 @@ public interface ProductSearchService {
     ListingPageDetails getProductListingSearchString(String searchString, String sortBy, Integer page, Integer pageSize);
 
     ProductFilters getProductFilters(String searchString);
+
+    ProductFilters getProductParameterFilter(String masterCategoryName, String categoryName, String subCategoryName, String brand, String gender, String colour, Integer discountPercentage);
 }

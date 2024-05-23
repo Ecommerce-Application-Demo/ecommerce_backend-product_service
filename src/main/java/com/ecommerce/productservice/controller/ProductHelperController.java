@@ -23,7 +23,7 @@ import java.util.Map;
 @RestController
 @CrossOrigin
 @RequestMapping("/helper")
-@Tag(name = "Product Helper Controller",description = "Helper APIs related to image & pincode")
+@Tag(name = "3. Product Helper Controller",description = "Helper APIs related to image & pincode")
 public class ProductHelperController {
 
     @Autowired
@@ -81,6 +81,11 @@ public class ProductHelperController {
     @GetMapping("/api-secret")
     public ResponseEntity<Boolean> apiKeyValidation(@RequestBody String apiSecret) throws ProductException {
        return new ResponseEntity<>(helperService.validateApiKey(apiSecret), HttpStatus.OK);
+    }
+
+    @GetMapping("/index")
+    public String index(){
+        return "From Product Service";
     }
 }
 

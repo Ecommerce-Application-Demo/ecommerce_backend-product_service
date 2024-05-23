@@ -78,7 +78,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         List<BreadCrumb> breadCrumbs = new ArrayList<>();
         String[] searchString2;
         Integer price = null;
-        searchString=searchString.replaceAll("-"," ");
+        searchString = searchString.replaceAll("-", " ");
         if (Pattern.compile("under (\\d+)").matcher(searchString).find()) {
             searchString2 = searchString.split("under ");
             searchString = searchString2[0];
@@ -125,7 +125,26 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     @Override
     public ProductFilters getProductFilters(String searchString) {
-        List<ProductStyleVariant> styleVariants;
+        String[] searchString2;
+        Integer price = null;
+        searchString = searchString.replaceAll("-", " ");
+        if (Pattern.compile("under (\\d+)").matcher(searchString).find()) {
+            searchString2 = searchString.split("under ");
+            searchString = searchString2[0];
+            price = Integer.parseInt(searchString2[1]);
+        }
+
+        return getProductFilter( styleVariantRepo.findProductFilters(searchString, price) );
+    }
+
+    @Override
+    public ProductFilters getProductParameterFilter(String masterCategoryName, String categoryName, String subCategoryName, String brand, String gender, String colour, Integer discountPercentage) {
+
+        return getProductFilter( styleVariantRepo.findProductFiltersWithParameter(masterCategoryName, categoryName, subCategoryName,
+                                                    brand,gender, colour, discountPercentage) );
+    }
+
+    public ProductFilters getProductFilter(List<ProductStyleVariant> styleVariants){
         Set<MasterCategory> masterCategories = new HashSet<>();
         Set<CategoryDto> categories = new HashSet<>();
         Set<SubCategoryDto> subCategories = new HashSet<>();
@@ -136,16 +155,6 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         AtomicInteger maxPrice = new AtomicInteger(0);
         AtomicInteger minPrice = new AtomicInteger(1000000000);
 
-        String[] searchString2;
-        Integer price = null;
-
-        searchString = searchString.replaceAll("-", " ");
-        if (Pattern.compile("under (\\d+)").matcher(searchString).find()) {
-            searchString2 = searchString.split("under ");
-            searchString = searchString2[0];
-            price = Integer.parseInt(searchString2[1]);
-        }
-        styleVariants = styleVariantRepo.findProductFilters(searchString, price);
         styleVariants.forEach(psv -> {
             Product product = psv.getProduct();
             masterCategories.add(product.getMasterCategory());
@@ -168,6 +177,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         return new ProductFilters(masterCategories, categories, subCategories, brands, colours, sizes,
                 discountPercentages, BigDecimal.valueOf(maxPrice.intValue()), BigDecimal.valueOf(minPrice.intValue()));
     }
+
 
     @Override
     public List<SizeInfo> getSizes(String styleId) {

@@ -30,7 +30,7 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/add")
 @Validated
-@Tag(name = "Product Add Controller",description = "REST APIs for Adding Products,Categories,inventory,warehouses into database. Protected with API Key-Secret")
+@Tag(name = "4. Product Add Controller",description = "REST APIs for Adding Products,Categories,inventory,warehouses into database. Protected with API Key-Secret")
 public class ProductAddController {
 
     @Autowired
@@ -136,10 +136,5 @@ public class ProductAddController {
     @PostMapping("/product/inventory")
     public ResponseEntity<List<Inventory>> addInventory(@RequestBody List<Inventory> inventory){
         return new ResponseEntity<>(productService.addInventory(inventory), HttpStatus.OK);
-    }
-
-    @GetMapping("/index")
-    public String index(){
-        return "From ProductAddController";
     }
 }

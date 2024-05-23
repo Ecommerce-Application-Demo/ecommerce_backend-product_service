@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin
 @RequestMapping("/delete")
-@Tag(name = "Product Delete Controller",description = "REST APIs for deleting added product style or sizes")
+@Tag(name = "5. Product Delete Controller",description = "REST APIs for deleting added product style or sizes")
 public class ProductDeleteController {
 
     @Autowired

@@ -5,14 +5,20 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
+
 @Configuration
 public class Config {
+
+    @Autowired
+    Environment env;
 
     @Bean
     ModelMapper modelMapper(){
@@ -31,10 +37,12 @@ public class Config {
                         .url("https://github.com/Ecommerce-Application-Demo/ecommerce-backend"));
     }
 
-    @Profile(value = "dev")
     @Scheduled(fixedDelay = 1000*60*5)
     void renderRunner() {
-        RestTemplate restTemplate= new RestTemplate();
-        restTemplate.getForEntity("https://ecommerce-backend-product-service.onrender.com/product/actuator/info",String.class);
+        if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getForEntity("https://ecommerce-backend-product-service.onrender.com/product/actuator/info", String.class);
+            System.out.println("================ H E LL O   WORLD =======================");
+        }
     }
 }
