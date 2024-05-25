@@ -43,10 +43,13 @@ public class ProductAddController {
             @ApiResponse(responseCode = "200", description = "Master Category Added",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = MasterCategoryDto.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
              })
     @PostMapping("/master-category")
-    public ResponseEntity<MasterCategoryDto> addMasterCategory(@RequestBody MasterCategoryDto masterCategoryDto){
-        return new ResponseEntity<>(productService.addMasterCategory(masterCategoryDto), HttpStatus.OK);
+    public ResponseEntity<MasterCategoryDto> addMasterCategory(@RequestBody MasterCategoryDto masterCategoryRequest){
+        return new ResponseEntity<>(productService.addMasterCategory(masterCategoryRequest), HttpStatus.OK);
     }
 
     @Operation(summary = "To add Category")
@@ -54,6 +57,9 @@ public class ProductAddController {
             @ApiResponse(responseCode = "200", description = "Category Added",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CategoryDto.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @PostMapping("/category")
 
@@ -66,10 +72,13 @@ public class ProductAddController {
             @ApiResponse(responseCode = "200", description = "SubCategory Added",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SubCategoryDto.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @PostMapping("/sub-category")
-    public ResponseEntity<SubCategoryDto> addSubCategory(@RequestBody SubCategoryRequest subCategoryDto){
-        return new ResponseEntity<>(productService.addSubCategory(subCategoryDto), HttpStatus.OK);
+    public ResponseEntity<SubCategoryDto> addSubCategory(@RequestBody SubCategoryRequest subCategoryRequest){
+        return new ResponseEntity<>(productService.addSubCategory(subCategoryRequest), HttpStatus.OK);
     }
 
     @Operation(summary = "To add Brand")
@@ -77,6 +86,9 @@ public class ProductAddController {
             @ApiResponse(responseCode = "200", description = "Brand` Added",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = BrandDto.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @PostMapping("/brand")
     public ResponseEntity<BrandDto> addBrand(@RequestBody BrandDto brandDto){
@@ -88,10 +100,16 @@ public class ProductAddController {
             @ApiResponse(responseCode = "200", description = "Product Added",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ProductDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "'Bad Request'. Input Validation(s) failed.",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @PostMapping("/product")
-    public ResponseEntity<ProductDto> addProduct(@RequestBody @Valid ProductRequest productDto){
-        return new ResponseEntity<>(productService.addProduct(productDto), HttpStatus.OK);
+    public ResponseEntity<ProductDto> addProduct(@RequestBody @Valid ProductRequest productRequest){
+        return new ResponseEntity<>(productService.addProduct(productRequest), HttpStatus.OK);
     }
 
     @Operation(summary = "To add Review")
@@ -99,6 +117,9 @@ public class ProductAddController {
             @ApiResponse(responseCode = "200", description = "Review Added",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ReviewRating.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @PostMapping("/review")
     public ResponseEntity<ReviewRating> addReview(@RequestBody ReviewRating reviewRating){
@@ -110,6 +131,9 @@ public class ProductAddController {
             @ApiResponse(responseCode = "200", description = "Product Style Added",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ProductStyleVariant.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @PostMapping("/product/style")
     public ResponseEntity<ProductStyleVariant> addProductStyle(@RequestBody StyleVariantRequest request){
@@ -121,6 +145,9 @@ public class ProductAddController {
             @ApiResponse(responseCode = "200", description = "Warehouse",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Warehouse.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @PostMapping("/warehouse")
     public ResponseEntity<Warehouse> addWarehouse(@RequestBody Warehouse warehouse){
@@ -132,6 +159,9 @@ public class ProductAddController {
             @ApiResponse(responseCode = "200", description = "Product Style Inventory",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Inventory.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @PostMapping("/product/inventory")
     public ResponseEntity<List<Inventory>> addInventory(@RequestBody List<Inventory> inventory){

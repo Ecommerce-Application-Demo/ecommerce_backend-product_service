@@ -10,9 +10,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ListingPageDetails{
-        List<ProductListingResponse> responseList;
-        List<BreadCrumb> breadCrumbs;
-        int totalPages;
-        long totalElements;
-        boolean hasNextPage;
+       private List<ProductListingResponse> productList;
+       private List<BreadCrumb> breadCrumbList;
+       private int totalPages;
+       private int currentPage;
+       private long totalProductCount;
+       private int currentPageProductCount;
+       private boolean hasNextPage;
 }

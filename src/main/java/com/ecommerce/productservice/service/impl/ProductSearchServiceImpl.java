@@ -43,9 +43,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     @Override
     public ListingPageDetails getProductListingParameters(String masterCategoryName, String categoryName, String subCategoryName, String brand,
                                                           String gender, String colour, String size, Integer discountPercentage,
-                                                          Integer minPrice, Integer maxPrice, String sortBy, Integer page, Integer pageSize) {
+                                                          Integer minPrice, Integer maxPrice, String sortBy, Integer pageNumber, Integer pageSize) {
 
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber-1, pageSize);
         Page<ProductStyleVariant> styleVariants = null;
 
         if (sortBy.equalsIgnoreCase(SortBy.HighToLow.name())) {
@@ -66,14 +66,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         if (styleVariants.hasContent()) {
             Product product = styleVariants.stream().findFirst().get().getProduct();
             return new ListingPageDetails(getListingPageDetails(styleVariants), productGetService.getBreadCrumb(product),
-                    styleVariants.getTotalPages(), styleVariants.getTotalElements(), styleVariants.hasNext());
+                    styleVariants.getTotalPages(), styleVariants.getNumber()+1,styleVariants.getTotalElements(),
+                    styleVariants.getNumberOfElements(), styleVariants.hasNext());
         }
         return new ListingPageDetails();
     }
 
     @Override
-    public ListingPageDetails getProductListingSearchString(String searchString, String sortBy, Integer page, Integer pageSize) {
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
+    public ListingPageDetails getProductListingSearchString(String searchString, String sortBy, Integer pageNumber, Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNumber-1, pageSize);
         Page<ProductStyleVariant> styleVariants = null;
         List<BreadCrumb> breadCrumbs = new ArrayList<>();
         String[] searchString2;
@@ -96,7 +97,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         }
         if (styleVariants.hasContent()) {
             breadCrumbs.add(new BreadCrumb(CaseUtils.toCamelCase(searchString, true, ' '), null));
-            return new ListingPageDetails(getListingPageDetails(styleVariants), breadCrumbs, styleVariants.getTotalPages(), styleVariants.getTotalElements(),
+            return new ListingPageDetails(getListingPageDetails(styleVariants), breadCrumbs, styleVariants.getTotalPages(),
+                    styleVariants.getNumber()+1,styleVariants.getTotalElements(),styleVariants.getNumberOfElements(),
                     styleVariants.hasNext());
         }
         return new ListingPageDetails();
@@ -203,9 +205,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                         flag.set(true);
                 });
                 if (flag.get())
-                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(), psv.getImages().getImage1(), true));
+                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(),psv.getColourHexCode(), psv.getImages().getImage1(), true));
                 else
-                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(), psv.getImages().getImage1(), false));
+                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(),psv.getColourHexCode(), psv.getImages().getImage1(), false));
             });
         }
         return colourInfos;

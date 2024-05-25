@@ -4,6 +4,7 @@ import com.ecommerce.productservice.dto.ProductFilters;
 import com.ecommerce.productservice.dto.response.ColourInfo;
 import com.ecommerce.productservice.dto.response.ListingPageDetails;
 import com.ecommerce.productservice.dto.response.SizeInfo;
+import com.ecommerce.productservice.exceptionhandler.ProductException;
 import com.ecommerce.productservice.service.declaration.ProductSearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,7 +37,10 @@ public class ProductSearchController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product Listing page details with applied Filters & Pagination",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ListingPageDetails.class)) })
+                            schema = @Schema(implementation = ListingPageDetails.class)) }),
+            @ApiResponse(responseCode = "400", description = "Page number & Products per page fields must be greater than 0",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @GetMapping("/product/listing")
     public ResponseEntity<ListingPageDetails> getProductListingParameters(
@@ -50,12 +54,14 @@ public class ProductSearchController {
             @RequestParam(required = false) Integer discountPercentage,
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice,
-            @RequestParam(required = false,defaultValue = "0") Integer pageNumber,
-            @RequestParam(required = false,defaultValue = "10") Integer numberOfItem,
-            @RequestParam(required = false,defaultValue = "popularity") String sortBy)
-    {
-        return new ResponseEntity<>(productService.getProductListingParameters(masterCategoryName,categoryName,subCategoryName,brand,
-                gender,colour,size,discountPercentage,minPrice,maxPrice,sortBy,pageNumber,numberOfItem), HttpStatus.OK);
+            @RequestParam(required = false,defaultValue = "1") Integer pageNumber,
+            @RequestParam(required = false,defaultValue = "10") Integer productsPerPage,
+            @RequestParam(required = false,defaultValue = "popularity") String sortBy) throws ProductException {
+        if(pageNumber > 0 && productsPerPage > 0)
+            return new ResponseEntity<>(productService.getProductListingParameters(masterCategoryName,categoryName,subCategoryName,brand,
+                gender,colour,size,discountPercentage,minPrice,maxPrice,sortBy,pageNumber,productsPerPage), HttpStatus.OK);
+        else
+            throw new ProductException("INVALID_PAGINATION");
     }
 
     @Operation(summary = "To get Product details for Product Listing Page with any Search String")
@@ -67,16 +73,21 @@ public class ProductSearchController {
                                                                 " Example : 'Men red tshirts under 499 '",
 
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ListingPageDetails.class)) })
+                            schema = @Schema(implementation = ListingPageDetails.class)) }),
+            @ApiResponse(responseCode = "400", description = "Page number & Products per page fields must be greater than 0",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @GetMapping("/product/listing/{searchString}")
     public ResponseEntity<ListingPageDetails> getProductListingSearchString(
             @PathVariable(value = "searchString") String searchString,
-            @RequestParam(required = false,defaultValue = "0") Integer pageNumber,
-            @RequestParam(required = false,defaultValue = "10") Integer numberOfItem,
-            @RequestParam(required = false,defaultValue = "popularity") String sortBy)
-    {
-        return new ResponseEntity<>(productService.getProductListingSearchString(searchString,sortBy,pageNumber,numberOfItem), HttpStatus.OK);
+            @RequestParam(required = false,defaultValue = "1") Integer pageNumber,
+            @RequestParam(required = false,defaultValue = "10") Integer productsPerPage,
+            @RequestParam(required = false,defaultValue = "popularity") String sortBy) throws ProductException {
+        if(pageNumber > 0 && productsPerPage > 0)
+            return new ResponseEntity<>(productService.getProductListingSearchString(searchString,sortBy,pageNumber,productsPerPage), HttpStatus.OK);
+        else
+            throw new ProductException("INVALID_PAGINATION");
     }
 
 

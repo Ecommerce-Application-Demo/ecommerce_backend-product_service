@@ -24,6 +24,9 @@ public class ProductDeleteController {
             @ApiResponse(responseCode = "200", description = "Size deleted successfully",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = String.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @DeleteMapping("/size")
     public String deleteSize(@RequestParam String sizeId){
@@ -36,6 +39,9 @@ public class ProductDeleteController {
             @ApiResponse(responseCode = "200", description = "Style deleted successfully",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = String.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @DeleteMapping("/style")
     public String deleteStyle(@RequestParam String styleId){
@@ -48,6 +54,9 @@ public class ProductDeleteController {
             @ApiResponse(responseCode = "200", description = "Product deleted successfully",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = String.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
     })
     @DeleteMapping("/product")
     public String deleteProduct(@RequestParam String productId){

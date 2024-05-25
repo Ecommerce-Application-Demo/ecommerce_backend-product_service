@@ -26,6 +26,6 @@ public class ProductResponse {
     private CategoryDto category;
     private SubCategoryDto SubCategory;
     private BrandDto brand;
-    private List<BreadCrumb> breadCrumbs;
+    private List<BreadCrumb> breadCrumbList;
     private List<StyleVariantDetailsDto> styleVariants;
 }
