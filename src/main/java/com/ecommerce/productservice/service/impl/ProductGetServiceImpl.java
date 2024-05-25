@@ -86,10 +86,10 @@ public class ProductGetServiceImpl implements ProductGetService {
             productDto = productRepo.findProductByCategory(subCategoryName, categoryName, masterCategoryName, brand, gender).stream()
                     .map(productDto1 -> {
                         ProductResponse res = modelMapper.map(productDto1, ProductResponse.class);
-                        res.setStyleVariants(getStyleVariants(productDto1.getProductId().toString(), null, null, null));
+                        res.setStyleVariants(getStyleVariants(productDto1.getProductId(), null, null, null));
                         breadCrumbs.addAll(getBreadCrumb(productDto1));
                         breadCrumbs.add((new BreadCrumb(productDto1.getProductName(),null)));
-                        res.setBreadCrumbs(breadCrumbs);
+                        res.setBreadCrumbList(breadCrumbs);
                         return res;
                     }).toList();
         } else {
@@ -100,7 +100,7 @@ public class ProductGetServiceImpl implements ProductGetService {
                         getBreadCrumb(productDto1).add(new BreadCrumb(productDto1.getProductName(),null));
                         breadCrumbs.addAll(getBreadCrumb(productDto1));
                         breadCrumbs.add((new BreadCrumb(productDto1.getProductName(),null)));
-                        res.setBreadCrumbs(breadCrumbs);
+                        res.setBreadCrumbList(breadCrumbs);
                         return res;
                     }).toList();
         }
