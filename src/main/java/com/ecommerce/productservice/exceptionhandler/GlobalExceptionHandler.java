@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> allOtherException(Exception ex) {
         log.error(ex.getMessage(),ex);
         ErrorResponse response = new ErrorResponse(ErrorCode.GENERAL_EXCEPTION.getErrorMessage()
-                +", [ "+ex.getMessage()+" ]", ErrorCode.GENERAL_EXCEPTION.getErrorCode());
+                +". [ "+ex.getMessage()+" ]", ErrorCode.GENERAL_EXCEPTION.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleFormatException(HttpMessageNotReadableException ex) {
         log.error(ex.getMessage(),ex);
-        ErrorResponse response = new ErrorResponse(ErrorCode.INPUT_VALIDATION_FAILED.getErrorMessage()+", ["+
+        ErrorResponse response = new ErrorResponse(ErrorCode.INPUT_VALIDATION_FAILED.getErrorMessage()+". ["+
                                                     ex.getMessage()+" ]",ErrorCode.INPUT_VALIDATION_FAILED.getErrorCode() );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST) ;
     }

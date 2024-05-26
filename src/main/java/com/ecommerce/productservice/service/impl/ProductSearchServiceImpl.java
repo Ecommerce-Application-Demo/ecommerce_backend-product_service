@@ -108,18 +108,19 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         List<ProductListingResponse> productListingResponse = new ArrayList<>();
 
         styleVariants.forEach(styleVariant -> {
-            AtomicBoolean flag = new AtomicBoolean(false);
-            styleVariant.getSizeDetails().forEach(size -> {
-                if (size.getQuantity() != null && size.getQuantity() > 0)
-                    flag.set(true);
-            });
             ProductListingResponse res = modelMapper.map(styleVariant, ProductListingResponse.class);
+            styleVariant.getSizeDetails().forEach(size -> {
+                if (size.getQuantity() != null && size.getQuantity() > 0) {
+                    res.setInStock(true);
+                    if (size.getQuantity() <= 10)
+                        res.setOnlyFewLeft(true);
+                }
+            });
             Product product = productRepo.findById(res.getProductId()).get();
             res.setBrand(product.getBrand());
             res.setProductAvgRating(product.getProductAvgRating().toString());
             res.setReviewCount(product.getReviewCount().toString());
             res.setDefaultImage(styleVariant.getImages().getImage1());
-            res.setInStock(flag.get());
             productListingResponse.add(res);
         });
         return productListingResponse;

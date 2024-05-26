@@ -39,9 +39,9 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
             "ORDER BY ?3",nativeQuery = true)
     Page<ProductStyleVariant> findProductByField(String searchInput, Integer price, String sortBy, PageRequest pageRequest);
 
-    @Query(value = "SELECT s.* FROM product.product_style_variant s " +
-            "LEFT OUTER JOIN product.product p ON s.psv_product = p.product_id " +
-            "LEFT OUTER JOIN product.size_details sd ON s.style_id = sd.psv_id "+
+    @Query(value = "SELECT DISTINCT * FROM (SELECT s.* FROM product.product_style_variant s " +
+            "INNER JOIN product.product p ON s.psv_product = p.product_id " +
+            "INNER JOIN product.size_details sd ON s.style_id = sd.psv_id "+
             "WHERE (p.product_master_category = ?1 OR ?1 IS NULL) "+
             "AND (p.product_category = ?2 OR ?2 IS NULL) " +
             "AND (p.product_sub_category = ?3 OR ?3 IS NULL) " +
@@ -52,7 +52,7 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
             "AND (s.discount_percentage >= ?8 OR ?8 IS NULL) " +
             "AND (s.final_price >= ?9 OR ?9 IS NULL) " +
             "AND (s.final_price <= ?10 OR ?10 IS NULL) " +
-            "ORDER BY ?11",nativeQuery = true)
+            "ORDER BY ?11)",nativeQuery = true)
     Page<ProductStyleVariant> getFilteredProduct(String masterCategoryName, String categoryName, String subCategoryName,
                                                  String brandName, String gender, String colour, String size, Integer discountPercentage,
                                                  Integer minPrice, Integer maxPrice, String sortBy, PageRequest pageRequest);
@@ -68,7 +68,7 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
     List<ProductStyleVariant> findProductFilters(String searchInput,Integer price);
 
 
-    @Query(value = "SELECT s.* FROM product.product_style_variant s " +
+    @Query(value = "SELECT DISTINCT s.* FROM product.product_style_variant s " +
             "LEFT OUTER JOIN product.product p ON s.psv_product = p.product_id " +
             "LEFT OUTER JOIN product.size_details sd ON s.style_id = sd.psv_id "+
             "WHERE (p.product_master_category = ?1 OR ?1 IS NULL) "+
