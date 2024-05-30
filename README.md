@@ -14,12 +14,12 @@ Product Service of root microservices project [E-commerce Backend](https://githu
 
  ## Features
 
-- Product Management:
-  - Ability to add All Categories, Product & SKUs.
-  - Get Products & SKUs based on custom filter.
-  
-- Planned Features:
-  - Adding ElasticSearch for quick search  implementation.
+- ### Product Management:
+  - Full Text Search implementation using PostgreSQL query.
+  - Get Products as per will from text search or filters.
+  - Get product delivery time from nearest Warehouse, if deliverable at your pincode.
+  - Ability to add All Categories,Product & it's Style variants.
+  - Warehouse based inventory management.
 
 ## Project Structure
 
@@ -31,7 +31,7 @@ Microservices can be accessed using [API Gateway](https://github.com/Ecommerce-A
 
 The Swagger documentation for this project's APIs : 
 
-- [Product Service](https://ecommerce-backend-dev.onrender.com/product/swagger-ui/index.html)
+- [Product Service](https://ecommerce-backend-product-service.onrender.com/product/swagger-ui/index.html)
 
 ## Live Website
 

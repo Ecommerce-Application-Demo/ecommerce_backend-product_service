@@ -109,7 +109,7 @@ public class ProductGetServiceImpl implements ProductGetService {
 
     @Override
     public List<ReviewRating> getReview(String productId) {
-        return reviewRatingRepo.findAllByProductId(productId);
+        return reviewRatingRepo.findAllByStyleId(productId);
     }
 
     @Override

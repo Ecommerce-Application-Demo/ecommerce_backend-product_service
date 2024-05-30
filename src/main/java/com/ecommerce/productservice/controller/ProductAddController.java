@@ -9,6 +9,7 @@ import com.ecommerce.productservice.entity.ProductStyleVariant;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
+import com.ecommerce.productservice.exceptionhandler.ProductException;
 import com.ecommerce.productservice.service.declaration.ProductAddService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -122,7 +123,7 @@ public class ProductAddController {
                             schema = @Schema(implementation = String.class)) })
     })
     @PostMapping("/review")
-    public ResponseEntity<ReviewRating> addReview(@RequestBody ReviewRating reviewRating){
+    public ResponseEntity<ReviewRating> addReview(@RequestBody ReviewRating reviewRating) throws ProductException {
         return new ResponseEntity<>(productService.addReview(reviewRating), HttpStatus.OK);
     }
 

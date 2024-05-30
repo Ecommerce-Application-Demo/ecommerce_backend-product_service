@@ -13,6 +13,7 @@ public enum ErrorCode {
     API_KEY_NOT_PASSED(401,211,"API Key is not passed"),
     INVALID_API_SECRET(401,214,"API Secret is Invalid"),
     INVALID_PAGINATION(400,217,"Page number & Products per page fields must be greater than 0"),
+    INVALID_STYLE_ID(400,218,"Style ID does not exist"),
 
     INVALID_EMAIL(400,134,"Given email is in invalid format."),
     EMAIL_NOT_BLANK(400,140,"Email can not be blank"),

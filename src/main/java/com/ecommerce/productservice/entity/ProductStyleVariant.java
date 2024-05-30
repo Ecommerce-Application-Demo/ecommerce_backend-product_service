@@ -33,7 +33,8 @@ public class ProductStyleVariant {
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(columnDefinition = "jsonb")
 	private Images images;
-	private String productBreadcrumbUrl;
+	private Float productAvgRating;
+	private Long reviewCount;
 	private LocalDateTime createdTimeStamp;
 	@ManyToOne
 	@JoinColumn(name = "psv_product")

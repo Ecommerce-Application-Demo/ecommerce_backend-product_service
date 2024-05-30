@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -49,19 +50,19 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         Page<ProductStyleVariant> styleVariants = null;
 
         if (sortBy.equalsIgnoreCase(SortBy.HighToLow.name())) {
-            styleVariants = styleVariantRepo.getFilteredProduct(masterCategoryName, categoryName, subCategoryName, brand, gender,
+            styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
                     colour, size, discountPercentage, minPrice, maxPrice,
-                    SortBy.HighToLow.getQuery(), pageRequest);
+                     pageRequest.withSort(Sort.Direction.DESC,"final_price"));
         }
         if (sortBy.equalsIgnoreCase(SortBy.LowToHigh.name())) {
-            styleVariants = styleVariantRepo.getFilteredProduct(masterCategoryName, categoryName, subCategoryName, brand, gender,
+            styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
                     colour, size, discountPercentage, minPrice, maxPrice,
-                    SortBy.LowToHigh.getQuery(), pageRequest);
+                     pageRequest.withSort(Sort.Direction.ASC,"final_price"));
         }
         if (sortBy.equalsIgnoreCase(SortBy.Popularity.name())) {
-            styleVariants = styleVariantRepo.getFilteredProduct(masterCategoryName, categoryName, subCategoryName, brand, gender,
+            styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
                     colour, size, discountPercentage, minPrice, maxPrice,
-                    SortBy.Popularity.getQuery(), pageRequest);
+                    pageRequest.withSort(Sort.Direction.DESC,"product_avg_rating"));
         }
         if (styleVariants.hasContent()) {
             Product product = styleVariants.stream().findFirst().get().getProduct();
@@ -87,13 +88,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         }
 
         if (sortBy.equalsIgnoreCase(SortBy.HighToLow.name())) {
-            styleVariants = styleVariantRepo.findProductByField(searchString, price, SortBy.HighToLow.getQuery(), pageRequest);
+            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price,pageRequest.withSort(Sort.Direction.DESC,"final_price"));
         }
         if (sortBy.equalsIgnoreCase(SortBy.LowToHigh.name())) {
-            styleVariants = styleVariantRepo.findProductByField(searchString, price, SortBy.LowToHigh.getQuery(), pageRequest);
+            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price,pageRequest.withSort(Sort.Direction.ASC,"final_price"));
         }
         if (sortBy.equalsIgnoreCase(SortBy.Popularity.name())) {
-            styleVariants = styleVariantRepo.findProductByField(searchString, price, SortBy.Popularity.getQuery(), pageRequest);
+            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price,pageRequest.withSort(Sort.Direction.DESC,"product_avg_rating"));
         }
         if (styleVariants.hasContent()) {
             breadCrumbs.add(new BreadCrumb(CaseUtils.toCamelCase(searchString, true, ' '), null));
@@ -118,8 +119,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             });
             Product product = productRepo.findById(res.getProductId()).get();
             res.setBrand(product.getBrand());
-            res.setProductAvgRating(product.getProductAvgRating().toString());
-            res.setReviewCount(product.getReviewCount().toString());
+            res.setProductAvgRating(styleVariant.getProductAvgRating().toString());
+            res.setReviewCount(styleVariant.getReviewCount().toString());
             res.setDefaultImage(styleVariant.getImages().getImage1());
             productListingResponse.add(res);
         });
@@ -137,13 +138,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             price = Integer.parseInt(searchString2[1]);
         }
 
-        return getProductFilter( styleVariantRepo.findProductFilters(searchString, price) );
+        return getProductFilter( styleVariantRepo.findFiltersBySearchString(searchString, price) );
     }
 
     @Override
     public ProductFilters getProductParameterFilter(String masterCategoryName, String categoryName, String subCategoryName, String brand, String gender, String colour, Integer discountPercentage) {
 
-        return getProductFilter( styleVariantRepo.findProductFiltersWithParameter(masterCategoryName, categoryName, subCategoryName,
+        return getProductFilter( styleVariantRepo.findFiltersByParameters(masterCategoryName, categoryName, subCategoryName,
                                                     brand,gender, colour, discountPercentage) );
     }
 

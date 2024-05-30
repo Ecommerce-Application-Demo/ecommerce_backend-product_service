@@ -9,6 +9,7 @@ import com.ecommerce.productservice.entity.ProductStyleVariant;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
+import com.ecommerce.productservice.exceptionhandler.ProductException;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface ProductAddService {
 
     ProductDto addProduct(ProductRequest productDto);
 
-    ReviewRating addReview(ReviewRating reviewRating);
+    ReviewRating addReview(ReviewRating reviewRating) throws ProductException;
 
     ProductStyleVariant addStyleVariant(StyleVariantRequest request);
 

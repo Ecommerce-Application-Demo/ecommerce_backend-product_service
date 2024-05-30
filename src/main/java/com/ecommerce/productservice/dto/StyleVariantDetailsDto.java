@@ -20,6 +20,8 @@ public class StyleVariantDetailsDto {
     private BigDecimal discountPercentage;
     private BigDecimal finalPrice;
     private Images images;
+    private Float productAvgRating;
+    private Long reviewCount;
     private List<SizeDetails> sizeDetails;
     private String productId;
 }

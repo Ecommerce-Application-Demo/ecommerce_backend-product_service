@@ -1,6 +1,7 @@
 package com.ecommerce.productservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,6 @@ public class ReviewRating {
 	@Column(length = 1000)
 	private String review;
 	private Float rating;
-	private String productId;
+	@NotNull
+	private String styleId;
 }
