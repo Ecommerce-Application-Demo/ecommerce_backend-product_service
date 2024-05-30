@@ -89,7 +89,7 @@ public class ProductAddServiceImpl implements ProductAddService {
 
     @Override
     public ReviewRating addReview(ReviewRating reviewRating) throws ProductException {
-        ReviewRating reviewRatingResponse=new ReviewRating();
+        ReviewRating reviewRatingResponse;
         ProductStyleVariant psv=styleVariantRepo.findById(reviewRating.getStyleId()).orElse(null);
         if( psv != null) {
             reviewRatingResponse = reviewRatingRepo.save(reviewRating);
