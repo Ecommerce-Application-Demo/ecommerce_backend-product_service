@@ -17,7 +17,7 @@ public class Inventory {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String inventoryId;
     @NotNull
-    private String sizeVariantId;
+    private String skuId;
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private Warehouse warehouse;

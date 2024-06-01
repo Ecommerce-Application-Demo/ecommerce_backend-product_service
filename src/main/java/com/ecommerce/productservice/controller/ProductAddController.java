@@ -5,7 +5,6 @@ import com.ecommerce.productservice.dto.request.CategoryRequest;
 import com.ecommerce.productservice.dto.request.ProductRequest;
 import com.ecommerce.productservice.dto.request.StyleVariantRequest;
 import com.ecommerce.productservice.dto.request.SubCategoryRequest;
-import com.ecommerce.productservice.entity.ProductStyleVariant;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
@@ -131,13 +130,13 @@ public class ProductAddController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product Style Added",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ProductStyleVariant.class)) }),
+                            schema = @Schema(implementation = StyleVariantDetailsDto.class)) }),
             @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = String.class)) })
     })
     @PostMapping("/product/style")
-    public ResponseEntity<ProductStyleVariant> addProductStyle(@RequestBody StyleVariantRequest request){
+    public ResponseEntity<StyleVariantDetailsDto> addProductStyle(@RequestBody StyleVariantRequest request){
         return new ResponseEntity<>(productService.addStyleVariant(request), HttpStatus.OK);
     }
 

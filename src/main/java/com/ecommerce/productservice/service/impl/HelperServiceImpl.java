@@ -45,11 +45,11 @@ public class HelperServiceImpl implements HelperService {
     }
 
     @Override
-    public List<DeliveryTimeDetails> getDeliveryAvailability(String pincode, String sizeId) {
+    public List<DeliveryTimeDetails> getDeliveryAvailability(String pincode, String skuId) {
 
-        List<Inventory> inventory = inventoryRepo.findBySizeVariantId(sizeId);
+        List<Inventory> inventory = inventoryRepo.findBySkuId(skuId);
         List<DeliveryTimeDetails> timeDetailsList = new ArrayList<>();
-        if (!inventory.isEmpty() && inventoryRepo.SumQuantityBySizeVariantId(sizeId) > 0) {
+        if (!inventory.isEmpty() && inventoryRepo.SumQuantityBySizeVariantId(skuId) > 0) {
             List<Warehouse> warehouseList = new ArrayList<>();
             inventory.forEach(inv -> warehouseList.add(inv.getWarehouse()));
             Map<Warehouse, Integer> deliveryTimeMap = distanceFromWarehouse(pincode, warehouseList);

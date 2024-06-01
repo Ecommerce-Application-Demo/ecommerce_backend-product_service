@@ -103,21 +103,25 @@ public class ProductAddServiceImpl implements ProductAddService {
     }
 
     @Override
-    public ProductStyleVariant addStyleVariant(StyleVariantRequest request){
+    public StyleVariantDetailsDto addStyleVariant(StyleVariantRequest request){
 
-        ProductStyleVariant productStyleVariant = modelMapper.map(request, ProductStyleVariant.class);
-        productStyleVariant.setProduct(productRepo.findById(request.getProductId()).get());
+        ProductStyleVariant psv = modelMapper.map(request, ProductStyleVariant.class);
+        psv.setProduct(productRepo.findById(request.getProductId()).get());
 
-        productStyleVariant.setProductAvgRating(reviewRatingRepo.findAvgRating(productStyleVariant.getStyleId()));
-        productStyleVariant.setReviewCount(reviewRatingRepo.findCountByStyleId(productStyleVariant.getStyleId()));
-        BigDecimal finalPrice = productStyleVariant.getMrp().subtract(productStyleVariant.getDiscountPercentage().multiply(productStyleVariant.getMrp()).divide(new BigDecimal(100), MathContext.DECIMAL128));
-        productStyleVariant.setFinalPrice(finalPrice);
+        psv.setProductAvgRating(reviewRatingRepo.findAvgRating(psv.getStyleId()));
+        psv.setReviewCount(reviewRatingRepo.findCountByStyleId(psv.getStyleId()));
+        BigDecimal finalPrice = psv.getMrp().subtract(psv.getDiscountPercentage().multiply(psv.getMrp()).divide(new BigDecimal(100), MathContext.DECIMAL128));
+        psv.setFinalPrice(finalPrice);
+        if(psv.getDiscountPercentage().intValue()>0)
+            psv.setDiscountPercentageText(psv.getDiscountPercentage() + "% OFF");
+        else
+            psv.setDiscountPercentageText(null);
 
-        productStyleVariant.setCreatedTimeStamp(LocalDateTime.now());
-        ProductStyleVariant response= styleVariantRepo.save(productStyleVariant);
+        psv.setCreatedTimeStamp(LocalDateTime.now());
+        ProductStyleVariant response= styleVariantRepo.save(psv);
 
-        response.getSizeDetails().forEach(svd -> svd.setSizeId(response.getStyleId()+"_"+svd.getSize()));
-        return styleVariantRepo.save(response);
+        response.getSizeDetails().forEach(svd -> svd.setSkuId(response.getStyleId()+"_"+svd.getSize()));
+        return modelMapper.map(styleVariantRepo.save(response),StyleVariantDetailsDto.class);
     }
 
     @Override
@@ -128,7 +132,7 @@ public class ProductAddServiceImpl implements ProductAddService {
     @Override
     public List<Inventory> addInventory(List<Inventory> inventory){
         inventory=inventoryRepo.saveAll(inventory);
-        inventory.forEach(inv -> inventoryRepo.updateQuantity(inv.getSizeVariantId()) );
+        inventory.forEach(inv -> inventoryRepo.updateQuantity(inv.getSkuId()) );
         return  inventory;
     }
 }

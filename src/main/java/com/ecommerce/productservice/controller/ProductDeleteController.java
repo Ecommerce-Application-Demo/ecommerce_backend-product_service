@@ -29,8 +29,8 @@ public class ProductDeleteController {
                             schema = @Schema(implementation = String.class)) })
     })
     @DeleteMapping("/size")
-    public String deleteSize(@RequestParam String sizeId){
-        productDeleteService.deleteSize(sizeId);
+    public String deleteSize(@RequestParam String skuId){
+        productDeleteService.deleteSize(skuId);
         return "Size deleted successfully";
     }
 

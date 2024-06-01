@@ -25,7 +25,7 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
 
     @Modifying
     @Query(value = "DELETE FROM product.size_details sd WHERE sd.size_id = ?1",nativeQuery = true)
-    void deleteSize(String sizeId);
+    void deleteSize(String skuId);
 
 
     @Query(value = "SELECT psv.* " +

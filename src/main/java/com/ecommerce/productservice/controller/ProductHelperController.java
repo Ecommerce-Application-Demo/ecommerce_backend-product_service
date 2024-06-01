@@ -3,7 +3,6 @@ package com.ecommerce.productservice.controller;
 import com.ecommerce.productservice.dto.response.DeliveryTimeDetails;
 import com.ecommerce.productservice.entity.Images;
 import com.ecommerce.productservice.exceptionhandler.ProductException;
-import com.ecommerce.productservice.repository.PincodeRepo;
 import com.ecommerce.productservice.service.declaration.HelperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,8 +27,6 @@ public class ProductHelperController {
 
     @Autowired
     HelperService helperService;
-    @Autowired
-    PincodeRepo pincodeRepo;
     @Autowired
     Environment environment;
 
@@ -60,8 +57,8 @@ public class ProductHelperController {
     })
     @GetMapping("/isDeliverable")
     public ResponseEntity delivery(@RequestParam String pincode,
-                                   @RequestParam String sizeId) {
-        List<DeliveryTimeDetails> timeDetailsList = helperService.getDeliveryAvailability(pincode,sizeId);
+                                   @RequestParam String skuId) {
+        List<DeliveryTimeDetails> timeDetailsList = helperService.getDeliveryAvailability(pincode,skuId);
         if (timeDetailsList.isEmpty()) {
             return new ResponseEntity<>(environment.getProperty("PRODUCT_NOT_AVAILABLE_MESSAGE"), HttpStatus.OK);
         }else {
@@ -88,5 +85,6 @@ public class ProductHelperController {
     public String index(){
         return "From Product Service";
     }
+
 }
 

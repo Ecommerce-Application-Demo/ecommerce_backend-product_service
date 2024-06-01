@@ -10,7 +10,7 @@ public interface HelperService {
 
     Map<String,String> imageResizer(Map<String,String> image,int newHeight, int newQuality, int newWidth);
 
-    List<DeliveryTimeDetails> getDeliveryAvailability(String pincode, String sizeId);
+    List<DeliveryTimeDetails> getDeliveryAvailability(String pincode, String skuId);
 
     Boolean validateApiKey(String apiSecret) throws ProductException;
 }

@@ -1,12 +1,8 @@
 package com.ecommerce.productservice.service.impl;
 
-import com.ecommerce.productservice.dto.CategoryDto;
 import com.ecommerce.productservice.dto.ProductFilters;
 import com.ecommerce.productservice.dto.SortBy;
-import com.ecommerce.productservice.dto.SubCategoryDto;
 import com.ecommerce.productservice.dto.response.*;
-import com.ecommerce.productservice.entity.Brand;
-import com.ecommerce.productservice.entity.MasterCategory;
 import com.ecommerce.productservice.entity.Product;
 import com.ecommerce.productservice.entity.ProductStyleVariant;
 import com.ecommerce.productservice.repository.ProductRepo;
@@ -118,10 +114,11 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 }
             });
             Product product = productRepo.findById(res.getProductId()).get();
-            res.setBrand(product.getBrand());
+            res.setBrandName(product.getBrand().getBrandName());
             res.setProductAvgRating(styleVariant.getProductAvgRating().toString());
             res.setReviewCount(styleVariant.getReviewCount().toString());
             res.setDefaultImage(styleVariant.getImages().getImage1());
+
             productListingResponse.add(res);
         });
         return productListingResponse;
@@ -149,29 +146,29 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     }
 
     public ProductFilters getProductFilter(List<ProductStyleVariant> styleVariants){
-        Set<MasterCategory> masterCategories = new HashSet<>();
-        Set<CategoryDto> categories = new HashSet<>();
-        Set<SubCategoryDto> subCategories = new HashSet<>();
-        Set<Brand> brands = new HashSet<>();
+        Set<String> masterCategories = new HashSet<>();
+        Set<String> categories = new HashSet<>();
+        Set<String> subCategories = new HashSet<>();
+        Set<String> brands = new HashSet<>();
         Set<ColourHexCode> colours = new HashSet<>();
         Set<String> sizes = new HashSet<>();
-        Set<BigDecimal> discountPercentages = new HashSet<>();
+        Set<DiscountPercentage> discountPercentages = new HashSet<>();
         AtomicInteger maxPrice = new AtomicInteger(0);
         AtomicInteger minPrice = new AtomicInteger(1000000000);
 
         styleVariants.forEach(psv -> {
             Product product = psv.getProduct();
-            masterCategories.add(product.getMasterCategory());
-            categories.add(modelMapper.map(product.getCategory(), CategoryDto.class));
+            masterCategories.add(product.getMasterCategory().getMasterCategoryName());
+            categories.add(product.getCategory().getCategoryName());
             if (product.getSubCategory() != null)
-                subCategories.add(modelMapper.map(product.getSubCategory(), SubCategoryDto.class));
-            brands.add(product.getBrand());
+                subCategories.add(product.getSubCategory().getSubCategoryName());
+            brands.add(product.getBrand().getBrandName());
             colours.add(new ColourHexCode(psv.getColour(), psv.getColourHexCode()));
             psv.getSizeDetails().forEach(sizeDetail -> {
                 if (sizeDetail.getSize() != null)
                     sizes.add(sizeDetail.getSize());
             });
-            discountPercentages.add(psv.getDiscountPercentage());
+            discountPercentages.add(new DiscountPercentage(psv.getDiscountPercentage() ,psv.getDiscountPercentage().intValue() +"% or more"));
             if (psv.getFinalPrice().intValue() > maxPrice.intValue())
                 maxPrice.set(psv.getFinalPrice().intValue());
             if (psv.getFinalPrice().intValue() < minPrice.intValue())
@@ -189,7 +186,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         List<SizeInfo> sizes = new ArrayList<>();
         if (!productStyleVariant.getSizeDetails().isEmpty()) {
             productStyleVariant.getSizeDetails().forEach(sizeDetails -> {
-                sizes.add(new SizeInfo(sizeDetails.getSizeId(), sizeDetails.getSize(), sizeDetails.getQuantity()));
+                sizes.add(new SizeInfo(sizeDetails.getSkuId(), sizeDetails.getSize(), sizeDetails.getQuantity()));
             });
         }
         return sizes;
