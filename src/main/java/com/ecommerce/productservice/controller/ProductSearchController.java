@@ -55,7 +55,7 @@ public class ProductSearchController {
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice,
             @RequestParam(required = false,defaultValue = "1") Integer pageNumber,
-            @RequestParam(required = false,defaultValue = "10") Integer productsPerPage,
+            @RequestParam(required = false,defaultValue = "6") Integer productsPerPage,
             @RequestParam(required = false,defaultValue = "popularity") String sortBy) throws ProductException {
         if(pageNumber > 0 && productsPerPage > 0)
             return new ResponseEntity<>(productService.getProductListingParameters(masterCategoryName,categoryName,subCategoryName,brand,
@@ -82,7 +82,7 @@ public class ProductSearchController {
     public ResponseEntity<ListingPageDetails> getProductListingSearchString(
             @PathVariable(value = "searchString") String searchString,
             @RequestParam(required = false,defaultValue = "1") Integer pageNumber,
-            @RequestParam(required = false,defaultValue = "10") Integer productsPerPage,
+            @RequestParam(required = false,defaultValue = "6") Integer productsPerPage,
             @RequestParam(required = false,defaultValue = "popularity") String sortBy) throws ProductException {
         if(pageNumber > 0 && productsPerPage > 0)
             return new ResponseEntity<>(productService.getProductListingSearchString(searchString,sortBy,pageNumber,productsPerPage), HttpStatus.OK);
@@ -129,7 +129,7 @@ public class ProductSearchController {
                             schema = @Schema(implementation = ColourInfo.class)) }),
     })
     @GetMapping("/product/colours")
-    public ResponseEntity<Set<ColourInfo>> getaProductColours(@RequestParam String productId){
+    public ResponseEntity<Set<ColourInfo>> getProductColours(@RequestParam String productId){
         return new ResponseEntity<>(productService.getColours(productId), HttpStatus.OK);
     }
 

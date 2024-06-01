@@ -17,7 +17,9 @@ public enum ErrorCode {
 
     INVALID_EMAIL(400,134,"Given email is in invalid format."),
     EMAIL_NOT_BLANK(400,140,"Email can not be blank"),
-    INPUT_VALIDATION_FAILED(400,150,"Invalid input format");
+    INPUT_VALIDATION_FAILED(400,150,"Invalid input format"),
+
+    NOT_SERVICEABLE_PINCODE(406,230,"Uh-oh! We can't deliver there. Try a new address!");
 
     private final int httpStatusCode;
     private final int errorCode;

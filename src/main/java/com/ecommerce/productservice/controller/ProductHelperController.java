@@ -1,6 +1,6 @@
 package com.ecommerce.productservice.controller;
 
-import com.ecommerce.productservice.dto.response.DeliveryTimeDetails;
+import com.ecommerce.productservice.dto.response.DeliveryTimeResponse;
 import com.ecommerce.productservice.entity.Images;
 import com.ecommerce.productservice.exceptionhandler.ProductException;
 import com.ecommerce.productservice.service.declaration.HelperService;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -50,20 +49,15 @@ public class ProductHelperController {
             @ApiResponse(responseCode = "200", description = "Array of Delivery date of the specific Size of that product, if possible " +
                     "and Warehouse info from lowest time to higher in order",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = DeliveryTimeDetails.class)) }),
-            @ApiResponse(responseCode = "404", description = "Product not available at your area",
+                            schema = @Schema(implementation = DeliveryTimeResponse.class)) }),
+            @ApiResponse(responseCode = "406", description = "Uh-oh! We can't deliver there.Try a new address!",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = String.class))})
     })
     @GetMapping("/isDeliverable")
-    public ResponseEntity delivery(@RequestParam String pincode,
-                                   @RequestParam String skuId) {
-        List<DeliveryTimeDetails> timeDetailsList = helperService.getDeliveryAvailability(pincode,skuId);
-        if (timeDetailsList.isEmpty()) {
-            return new ResponseEntity<>(environment.getProperty("PRODUCT_NOT_AVAILABLE_MESSAGE"), HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(timeDetailsList, HttpStatus.OK);
-        }
+    public ResponseEntity<DeliveryTimeResponse> delivery(@RequestParam String pincode,
+                                                         @RequestParam String skuId) throws ProductException {
+        return new ResponseEntity<>(helperService.getDeliveryAvailability(pincode,skuId), HttpStatus.OK);
     }
 
     @Operation(summary = "Validate given API secret")
