@@ -38,7 +38,7 @@ public class Config {
     }
 
     @Scheduled(fixedDelay = 1000*60*5)
-    void renderRunner() {
+    void renderKeepAlive() {
         if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getForEntity("https://ecommerce-backend-product-service.onrender.com/product/actuator/info", String.class);

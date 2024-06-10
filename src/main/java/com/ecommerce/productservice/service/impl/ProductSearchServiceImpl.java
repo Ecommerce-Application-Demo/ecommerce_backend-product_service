@@ -8,7 +8,6 @@ import com.ecommerce.productservice.entity.ProductStyleVariant;
 import com.ecommerce.productservice.repository.ProductRepo;
 import com.ecommerce.productservice.repository.StyleVariantRepo;
 import com.ecommerce.productservice.service.declaration.ProductSearchService;
-import org.apache.commons.text.CaseUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,10 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
@@ -38,32 +34,62 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     ModelMapper modelMapper;
 
     @Override
+    public SingleProductResponse getSingleProductDetails(String styleId, String styleName) {
+        ProductStyleVariant styleVariant = styleVariantRepo.findSingleStyle(styleId, styleName);
+        if (styleVariant != null) {
+            SingleProductResponse res = modelMapper.map(styleVariant, SingleProductResponse.class);
+            styleVariant.getSizeDetails().forEach(size -> {
+                if (size.getQuantity() != null && size.getQuantity() > 0) {
+                    res.setInStock(true);
+                    if (size.getQuantity() <= 10)
+                        res.setOnlyFewLeft(true);
+                }
+            });
+            Product product = productRepo.findById(res.getProductId()).get();
+            res.setProductDescription(product.getProductDescription());
+            res.setMaterial(product.getMaterial());
+            res.setGender(product.getGender());
+            res.setBrand(product.getBrand());
+            res.setProductAvgRating(styleVariant.getProductAvgRating().toString());
+            res.setReviewCount(styleVariant.getReviewCount().toString());
+            res.setDefaultImage(styleVariant.getImages().getImage1());
+//            if(styleVariant.getCreatedTimeStamp().isAfter(LocalDateTime.now().minusDays(10)))
+//                res.setNewlyAdded(true);
+            res.set14dayReturnable(true);
+            res.setCashOnDeliveryAvailable(true);
+            res.setBreadCrumbList(productGetService.getBreadCrumb(product));
+            return res;
+        }
+        return new SingleProductResponse();
+    }
+
+    @Override
     public ListingPageDetails getProductListingParameters(String masterCategoryName, String categoryName, String subCategoryName, String brand,
                                                           String gender, String colour, String size, Integer discountPercentage,
                                                           Integer minPrice, Integer maxPrice, String sortBy, Integer pageNumber, Integer pageSize) {
 
-        PageRequest pageRequest = PageRequest.of(pageNumber-1, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
         Page<ProductStyleVariant> styleVariants = null;
 
         if (sortBy.equalsIgnoreCase(SortBy.HighToLow.name())) {
             styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
                     colour, size, discountPercentage, minPrice, maxPrice,
-                     pageRequest.withSort(Sort.Direction.DESC,"final_price"));
+                    pageRequest.withSort(Sort.Direction.DESC, "final_price"));
         }
         if (sortBy.equalsIgnoreCase(SortBy.LowToHigh.name())) {
             styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
                     colour, size, discountPercentage, minPrice, maxPrice,
-                     pageRequest.withSort(Sort.Direction.ASC,"final_price"));
+                    pageRequest.withSort(Sort.Direction.ASC, "final_price"));
         }
         if (sortBy.equalsIgnoreCase(SortBy.Popularity.name())) {
             styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
                     colour, size, discountPercentage, minPrice, maxPrice,
-                    pageRequest.withSort(Sort.Direction.DESC,"product_avg_rating"));
+                    pageRequest.withSort(Sort.Direction.DESC, "product_avg_rating"));
         }
         if (styleVariants.hasContent()) {
             Product product = styleVariants.stream().findFirst().get().getProduct();
             return new ListingPageDetails(getListingPageDetails(styleVariants), productGetService.getBreadCrumb(product),
-                    styleVariants.getTotalPages(), styleVariants.getNumber()+1,styleVariants.getTotalElements(),
+                    styleVariants.getTotalPages(), styleVariants.getNumber() + 1, styleVariants.getTotalElements(),
                     styleVariants.getNumberOfElements(), styleVariants.hasNext());
         }
         return new ListingPageDetails();
@@ -71,7 +97,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
     @Override
     public ListingPageDetails getProductListingSearchString(String searchString, String sortBy, Integer pageNumber, Integer pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber-1, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
         Page<ProductStyleVariant> styleVariants = null;
         List<BreadCrumb> breadCrumbs = new ArrayList<>();
         String[] searchString2;
@@ -84,18 +110,18 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         }
 
         if (sortBy.equalsIgnoreCase(SortBy.HighToLow.name())) {
-            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price,pageRequest.withSort(Sort.Direction.DESC,"final_price"));
+            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price, pageRequest.withSort(Sort.Direction.DESC, "final_price"));
         }
         if (sortBy.equalsIgnoreCase(SortBy.LowToHigh.name())) {
-            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price,pageRequest.withSort(Sort.Direction.ASC,"final_price"));
+            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price, pageRequest.withSort(Sort.Direction.ASC, "final_price"));
         }
         if (sortBy.equalsIgnoreCase(SortBy.Popularity.name())) {
-            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price,pageRequest.withSort(Sort.Direction.DESC,"product_avg_rating"));
+            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price, pageRequest.withSort(Sort.Direction.DESC, "product_avg_rating"));
         }
         if (styleVariants.hasContent()) {
-            breadCrumbs.add(new BreadCrumb(CaseUtils.toCamelCase(searchString, true, ' '), null));
+            breadCrumbs.add(new BreadCrumb(searchString, null));
             return new ListingPageDetails(getListingPageDetails(styleVariants), breadCrumbs, styleVariants.getTotalPages(),
-                    styleVariants.getNumber()+1,styleVariants.getTotalElements(),styleVariants.getNumberOfElements(),
+                    styleVariants.getNumber() + 1, styleVariants.getTotalElements(), styleVariants.getNumberOfElements(),
                     styleVariants.hasNext());
         }
         return new ListingPageDetails();
@@ -118,6 +144,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             res.setProductAvgRating(styleVariant.getProductAvgRating().toString());
             res.setReviewCount(styleVariant.getReviewCount().toString());
             res.setDefaultImage(styleVariant.getImages().getImage1());
+//            if(styleVariant.getCreatedTimeStamp().isAfter(LocalDateTime.now().minusDays(10)))
+//                res.setNewlyAdded(true);
 
             productListingResponse.add(res);
         });
@@ -135,17 +163,17 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             price = Integer.parseInt(searchString2[1]);
         }
 
-        return getProductFilter( styleVariantRepo.findFiltersBySearchString(searchString, price) );
+        return getProductFilter(styleVariantRepo.findFiltersBySearchString(searchString, price));
     }
 
     @Override
     public ProductFilters getProductParameterFilter(String masterCategoryName, String categoryName, String subCategoryName, String brand, String gender, String colour, Integer discountPercentage) {
 
-        return getProductFilter( styleVariantRepo.findFiltersByParameters(masterCategoryName, categoryName, subCategoryName,
-                                                    brand,gender, colour, discountPercentage) );
+        return getProductFilter(styleVariantRepo.findFiltersByParameters(masterCategoryName, categoryName, subCategoryName,
+                brand, gender, colour, discountPercentage));
     }
 
-    public ProductFilters getProductFilter(List<ProductStyleVariant> styleVariants){
+    public ProductFilters getProductFilter(List<ProductStyleVariant> styleVariants) {
         Set<String> masterCategories = new HashSet<>();
         Set<String> categories = new HashSet<>();
         Set<String> subCategories = new HashSet<>();
@@ -168,7 +196,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 if (sizeDetail.getSize() != null)
                     sizes.add(sizeDetail.getSize());
             });
-            discountPercentages.add(new DiscountPercentage(psv.getDiscountPercentage() ,psv.getDiscountPercentage().intValue() +"% or more"));
+            discountPercentages.add(new DiscountPercentage(psv.getDiscountPercentage(), psv.getDiscountPercentage().intValue() + "% or more"));
             if (psv.getFinalPrice().intValue() > maxPrice.intValue())
                 maxPrice.set(psv.getFinalPrice().intValue());
             if (psv.getFinalPrice().intValue() < minPrice.intValue())
@@ -178,7 +206,6 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         return new ProductFilters(masterCategories, categories, subCategories, brands, colours, sizes,
                 discountPercentages, BigDecimal.valueOf(maxPrice.intValue()), BigDecimal.valueOf(minPrice.intValue()));
     }
-
 
     @Override
     public List<SizeInfo> getSizes(String styleId) {
@@ -193,8 +220,12 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     }
 
     @Override
-    public Set<ColourInfo> getColours(String productId) {
-        List<ProductStyleVariant> productStyleVariantList = styleVariantRepo.findStyle(productId, null, null, null);
+    public Set<ColourInfo> getColours(String productId, String styleId) {
+        if(productId == null && styleId != null)
+            productId= Objects.requireNonNull(styleVariantRepo.findById(styleId).orElse(null)).getProduct().getProductId();
+        List<ProductStyleVariant> productStyleVariantList = new ArrayList<>();
+        if(productId != null)
+           productStyleVariantList  = styleVariantRepo.findStyle(productId, null);
         Set<ColourInfo> colourInfos = new HashSet<>();
         if (!productStyleVariantList.isEmpty()) {
             productStyleVariantList.forEach(psv -> {
@@ -204,9 +235,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                         flag.set(true);
                 });
                 if (flag.get())
-                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(),psv.getColourHexCode(), psv.getImages().getImage1(), true));
+                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(), psv.getColourHexCode(), psv.getImages().getImage1(), true));
                 else
-                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(),psv.getColourHexCode(), psv.getImages().getImage1(), false));
+                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(), psv.getColourHexCode(), psv.getImages().getImage1(), false));
             });
         }
         return colourInfos;

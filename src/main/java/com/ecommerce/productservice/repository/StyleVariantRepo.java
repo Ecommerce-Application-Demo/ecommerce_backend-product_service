@@ -11,16 +11,17 @@ import java.util.List;
 
 public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, String> {
 
+    @Query(value = "SELECT s.* FROM product.product_style_variant s " +
+            "WHERE s.style_id = ?1 " +
+            "AND LOWER(s.style_name) = LOWER(?2) ", nativeQuery = true)
+    ProductStyleVariant findSingleStyle(String styleId, String styleName);
 
     @Query(value = "SELECT s.* FROM product.product_style_variant s " +
             "LEFT OUTER JOIN product.product p ON s.psv_product = p.product_id " +
-            "LEFT OUTER JOIN product.size_details sd ON s.style_id = sd.psv_id "+
             "WHERE (?1 IS NULL OR p.product_id = ?1) " +
             "AND (?2 IS NULL OR s.style_id = ?2 ) " +
-            "AND (?3 IS NULL OR sd.size = ?3)"+
-            "AND (?4 IS NULL OR s.colour = ?4) " +
             "GROUP BY s.style_id", nativeQuery = true)
-    List<ProductStyleVariant> findStyle(String productId, String styleId, String Size, String colour);
+    List<ProductStyleVariant> findStyle(String productId, String styleId);
 
 
     @Modifying

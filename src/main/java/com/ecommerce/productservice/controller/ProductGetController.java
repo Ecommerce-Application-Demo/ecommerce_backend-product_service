@@ -116,10 +116,8 @@ public class ProductGetController {
     })
     @GetMapping("/product/style")
     public ResponseEntity<List<StyleVariantDetailsDto>> getProductStyle(@RequestParam String productId,
-                                                                      @RequestParam(required = false) String styleId,
-                                                                      @RequestParam(required = false) String size,
-                                                                      @RequestParam (required = false) String colour){
-        return new ResponseEntity<>(productService.getStyleVariants(productId,styleId,size,colour), HttpStatus.OK);
+                                                                      @RequestParam(required = false) String styleId){
+        return new ResponseEntity<>(productService.getStyleVariants(productId,styleId), HttpStatus.OK);
     }
 
     @Operation(summary = "To get all warehouses")

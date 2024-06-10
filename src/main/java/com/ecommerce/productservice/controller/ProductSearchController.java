@@ -3,6 +3,7 @@ package com.ecommerce.productservice.controller;
 import com.ecommerce.productservice.dto.ProductFilters;
 import com.ecommerce.productservice.dto.response.ColourInfo;
 import com.ecommerce.productservice.dto.response.ListingPageDetails;
+import com.ecommerce.productservice.dto.response.SingleProductResponse;
 import com.ecommerce.productservice.dto.response.SizeInfo;
 import com.ecommerce.productservice.exceptionhandler.ProductException;
 import com.ecommerce.productservice.service.declaration.ProductSearchService;
@@ -23,11 +24,24 @@ import java.util.Set;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/get/search")
+@RequestMapping(value = "/get/search")
 @Tag(name = "1. Product Search Controller",description = "REST APIs for getting search results & filters")
 public class ProductSearchController {
     @Autowired
     ProductSearchService productService;
+
+    @Operation(summary = "To get single Product details for product page")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product with All required details",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SingleProductResponse.class)) }),
+    })
+    @GetMapping("/product")
+    public ResponseEntity<SingleProductResponse> getProduct(@RequestParam String styleId,
+                                                            @RequestParam String styleName) {
+
+        return new ResponseEntity<>(productService.getSingleProductDetails(styleId,styleName), HttpStatus.OK);
+    }
 
 
     @Operation(summary = "To get Product details for Product Listing Page with Parameters")
@@ -129,8 +143,9 @@ public class ProductSearchController {
                             schema = @Schema(implementation = ColourInfo.class)) }),
     })
     @GetMapping("/product/colours")
-    public ResponseEntity<Set<ColourInfo>> getProductColours(@RequestParam String productId){
-        return new ResponseEntity<>(productService.getColours(productId), HttpStatus.OK);
+    public ResponseEntity<Set<ColourInfo>> getProductColours(@RequestParam(required = false) String productId,
+                                                             @RequestParam(required = false) String styleId){
+        return new ResponseEntity<>(productService.getColours(productId,styleId), HttpStatus.OK);
     }
 
 

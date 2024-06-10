@@ -110,13 +110,14 @@ public class HelperServiceImpl implements HelperService {
     }
 
     public Map<Warehouse, Integer> getSortedMap(Map<Warehouse, Integer> map) {
-        return map.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1, LinkedHashMap::new));
+        return map.entrySet()       // Get the set of entries from the map
+                .stream()                             // Create a stream from the set of entries
+                .sorted(Map.Entry.comparingByValue()) // Sort the entries by their values
+                .collect(Collectors.toMap(            // Collect the sorted entries into a new map
+                        Map.Entry::getKey,            // The key of the new map entry will be the key of the original map entry
+                        Map.Entry::getValue,          // The value of the new map entry will be the value of the original map entry
+                        (e1, e2) -> e1,               // In case of a key collision, keep the first entry (this shouldn't happen in this context)
+                        LinkedHashMap::new));
     }
 
     public static double degreesToRadians(double degrees) {

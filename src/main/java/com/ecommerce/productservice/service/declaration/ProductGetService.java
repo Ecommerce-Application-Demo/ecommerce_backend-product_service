@@ -21,7 +21,7 @@ public interface ProductGetService {
 
     List<ReviewRating> getReview(String productId);
 
-    List<StyleVariantDetailsDto> getStyleVariants(String productId, String styleId, String size, String colour );
+    List<StyleVariantDetailsDto> getStyleVariants(String productId, String styleId);
 
     List<Warehouse> getWarehouse(Integer warehouseId);
 
