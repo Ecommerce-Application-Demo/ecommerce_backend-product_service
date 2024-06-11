@@ -22,7 +22,7 @@ public interface ProductSearchService {
 
     ListingPageDetails getProductListingSearchString(String searchString, ProductFilterReq productFilters, String sortBy, Integer page, Integer pageSize);
 
-    ProductFilters getProductFilters(String searchString);
+    ProductFilters getProductFilters(String searchString, ProductFilterReq productFilters);
 
     ProductFilters getProductParameterFilter(String masterCategoryName, String categoryName, String subCategoryName, String brand, String gender, String colour, Integer discountPercentage);
 

@@ -34,5 +34,6 @@ public class SingleProductResponse {
     private boolean is14dayReturnable;
     private boolean isCashOnDeliveryAvailable;
     private List<BreadCrumb> breadCrumbList;
+    List<SizeInfo> sizes;
 
 }

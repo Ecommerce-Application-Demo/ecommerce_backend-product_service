@@ -46,7 +46,7 @@ public class ProductSearchController {
 
 
     @Operation(summary = "To get Product details for Product Listing Page with any Search String")
-    @Parameter(name = "productFilters",description = "ALl the required filters of Product")
+    @Parameter(name = "productFilters",description = "All the required filters of Product")
     @Parameter(name = "pageNumber",description = "Number of the page to return")
     @Parameter(name = "numberOfItem",description = "Number of item of the page to return")
     @Parameter(name = "sortBy", description = "Sort results by 'popularity', 'HighToLow' & 'LowToHigh' price")
@@ -81,8 +81,9 @@ public class ProductSearchController {
                             schema = @Schema(implementation = ProductFilters.class)) })
     })
     @GetMapping("/product/filters/{searchString}")
-    public ResponseEntity<ProductFilters> getProductFilter(@PathVariable(value = "searchString") String searchString){
-        return new ResponseEntity<>(productService.getProductFilters(searchString), HttpStatus.OK);
+    public ResponseEntity<ProductFilters> getProductFilter(@PathVariable(value = "searchString") String searchString,
+                                                           ProductFilterReq productFilterReq){
+        return new ResponseEntity<>(productService.getProductFilters(searchString,productFilterReq), HttpStatus.OK);
     }
 
     @Operation(summary = "To get All Colour Variants of a Product")

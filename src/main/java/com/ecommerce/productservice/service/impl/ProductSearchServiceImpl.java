@@ -59,6 +59,13 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             res.set14dayReturnable(true);
             res.setCashOnDeliveryAvailable(true);
             res.setBreadCrumbList(productGetService.getBreadCrumb(product));
+            List<SizeInfo> sizes = new ArrayList<>();
+            if (!styleVariant.getSizeDetails().isEmpty()) {
+                styleVariant.getSizeDetails().forEach(sizeDetails -> {
+                    sizes.add(new SizeInfo(sizeDetails.getSkuId(), sizeDetails.getSize(), sizeDetails.getQuantity()));
+                });
+            }
+            res.setSizes(sizes);
             return res;
         }
         return new SingleProductResponse();
@@ -101,7 +108,19 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     pageRequest.withSort(Sort.Direction.DESC, "product_avg_rating"));
         }
         if (styleVariants.hasContent()) {
-            breadCrumbs.add(new BreadCrumb(searchString, null));
+            if(searchString.equalsIgnoreCase("tshirts") || searchString.equalsIgnoreCase("t shirts")
+                    || searchString.equalsIgnoreCase("t-shirts")) {
+                breadCrumbs.add(new BreadCrumb("T-Shirts For Men & Women", null));
+            }
+            else if(searchString.equalsIgnoreCase("shirts")) {
+                breadCrumbs.add(new BreadCrumb("Shirts For Men & Women", null));
+            }
+            else if(searchString.equalsIgnoreCase("jeans") || searchString.equalsIgnoreCase("jean")) {
+                breadCrumbs.add(new BreadCrumb("Jeans For Men & Women", null));
+            }
+            else {
+                breadCrumbs.add(new BreadCrumb(searchString, null));
+            }
             return new ListingPageDetails(getListingPageDetails(styleVariants), breadCrumbs, styleVariants.getTotalPages(),
                     styleVariants.getNumber() + 1, styleVariants.getTotalElements(), styleVariants.getNumberOfElements(),
                     styleVariants.hasNext());
@@ -135,17 +154,19 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     }
 
     @Override
-    public ProductFilters getProductFilters(String searchString) {
+    public ProductFilters getProductFilters(String searchString, ProductFilterReq productFilters) {
         String[] searchString2;
-        Integer price = null;
         searchString = searchString.replaceAll("-", " ");
         if (Pattern.compile("under (\\d+)").matcher(searchString).find()) {
             searchString2 = searchString.split("under ");
             searchString = searchString2[0];
-            price = Integer.parseInt(searchString2[1]);
+            productFilters.setMaxPrice(Integer.parseInt(searchString2[1]));
         }
 
-        return getProductFilter(styleVariantRepo.findFiltersBySearchString(searchString, price));
+        return getProductFilter(styleVariantRepo.findFiltersBySearchString(searchString,productFilters.getMasterCategories(),
+                productFilters.getCategories(),productFilters.getSubCategories(),productFilters.getBrands(),productFilters.getGender(),
+                productFilters.getColours(), productFilters.getSizes(),productFilters.getDiscountPercentage(),
+                productFilters.getMinPrice(),productFilters.getMaxPrice()));
     }
 
     public ProductFilters getProductFilter(List<ProductStyleVariant> styleVariants) {

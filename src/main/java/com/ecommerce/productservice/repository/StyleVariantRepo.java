@@ -61,8 +61,19 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
             "COALESCE(p.product_sub_category,'') || ' ' || p.product_brand || ' ' || p.material || ' ' || p.gender || ' ' || p.product_description " +
             "|| ' ' || COALESCE(psv.colour,'') ) " +
             "@@ plainto_tsquery('english', ?1) " +
-            "AND (?2 IS NULL OR psv.final_price <= ?2) ",nativeQuery = true)
-    List<ProductStyleVariant> findFiltersBySearchString(String searchInput, Integer price);
+            "AND (p.product_master_category = ANY(CAST(?2 AS text[])) OR CAST(?2 AS text[]) IS NULL)" +
+            "AND (p.product_category = ANY(CAST(?3 AS text[])) OR CAST(?3 AS text[]) IS NULL) " +
+            "AND (p.product_sub_category = ANY(CAST(?4 AS text[])) OR CAST(?4 AS text[]) IS NULL) " +
+            "AND (p.product_brand = ANY(CAST(?5 AS text[])) OR CAST(?5 AS text[]) IS NULL) " +
+            "AND (p.gender = ANY(CAST(?6 AS text[])) OR CAST(?6 AS text[]) IS NULL) " +
+            "AND (psv.colour = ANY(CAST(?7 AS text[])) OR CAST(?7 AS text[]) IS NULL) " +
+            "AND (sd.size = ANY(CAST(?8 AS text[])) OR CAST(?8 AS text[]) IS NULL) " +
+            "AND (psv.discount_percentage >= CAST(?9 AS numeric) OR CAST(?9 AS numeric) IS NULL) " +
+            "AND (psv.final_price >= CAST(?10 AS numeric) OR CAST(?10 AS numeric) IS NULL) " +
+            "AND (psv.final_price <= CAST(?11 AS numeric) OR CAST(?11 AS numeric) IS NULL)",nativeQuery = true)
+    List<ProductStyleVariant> findFiltersBySearchString(String searchInput, String[] masterCategoryName, String[] categoryName,
+                                                        String[] subCategoryName, String[] brandName, String[] gender, String[] colour,
+                                                        String[] size, Integer discountPercentage, Integer minPrice, Integer maxPrice);
 
 
 
