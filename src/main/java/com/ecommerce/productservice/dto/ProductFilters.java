@@ -18,6 +18,7 @@ public class ProductFilters {
     private Set<String> categories;
     private Set<String> subCategories;
     private Set<String> brands;
+    private Set<String> gender;
     private Set<ColourHexCode> colours;
     private Set<String> sizes;
     private Set<DiscountPercentage> discountPercentages;

@@ -2,6 +2,7 @@ package com.ecommerce.productservice.service.impl;
 
 import com.ecommerce.productservice.dto.ProductFilters;
 import com.ecommerce.productservice.dto.SortBy;
+import com.ecommerce.productservice.dto.request.ProductFilterReq;
 import com.ecommerce.productservice.dto.response.*;
 import com.ecommerce.productservice.entity.Product;
 import com.ecommerce.productservice.entity.ProductStyleVariant;
@@ -64,59 +65,40 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     }
 
     @Override
-    public ListingPageDetails getProductListingParameters(String masterCategoryName, String categoryName, String subCategoryName, String brand,
-                                                          String gender, String colour, String size, Integer discountPercentage,
-                                                          Integer minPrice, Integer maxPrice, String sortBy, Integer pageNumber, Integer pageSize) {
-
+    public ListingPageDetails getProductListingSearchString(String searchString, ProductFilterReq productFilters, String sortBy, Integer pageNumber, Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
         Page<ProductStyleVariant> styleVariants = null;
-
-        if (sortBy.equalsIgnoreCase(SortBy.HighToLow.name())) {
-            styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
-                    colour, size, discountPercentage, minPrice, maxPrice,
-                    pageRequest.withSort(Sort.Direction.DESC, "final_price"));
-        }
-        if (sortBy.equalsIgnoreCase(SortBy.LowToHigh.name())) {
-            styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
-                    colour, size, discountPercentage, minPrice, maxPrice,
-                    pageRequest.withSort(Sort.Direction.ASC, "final_price"));
-        }
-        if (sortBy.equalsIgnoreCase(SortBy.Popularity.name())) {
-            styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
-                    colour, size, discountPercentage, minPrice, maxPrice,
-                    pageRequest.withSort(Sort.Direction.DESC, "product_avg_rating"));
-        }
-        if (styleVariants.hasContent()) {
-            Product product = styleVariants.stream().findFirst().get().getProduct();
-            return new ListingPageDetails(getListingPageDetails(styleVariants), productGetService.getBreadCrumb(product),
-                    styleVariants.getTotalPages(), styleVariants.getNumber() + 1, styleVariants.getTotalElements(),
-                    styleVariants.getNumberOfElements(), styleVariants.hasNext());
-        }
-        return new ListingPageDetails();
-    }
-
-    @Override
-    public ListingPageDetails getProductListingSearchString(String searchString, String sortBy, Integer pageNumber, Integer pageSize) {
-        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
-        Page<ProductStyleVariant> styleVariants = null;
+        if(productFilters==null)
+            productFilters = new ProductFilterReq();
         List<BreadCrumb> breadCrumbs = new ArrayList<>();
         String[] searchString2;
-        Integer price = null;
         searchString = searchString.replaceAll("-", " ");
         if (Pattern.compile("under (\\d+)").matcher(searchString).find()) {
             searchString2 = searchString.split("under ");
             searchString = searchString2[0];
-            price = Integer.parseInt(searchString2[1]);
+            productFilters.setMaxPrice(Integer.parseInt(searchString2[1]));
         }
 
         if (sortBy.equalsIgnoreCase(SortBy.HighToLow.name())) {
-            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price, pageRequest.withSort(Sort.Direction.DESC, "final_price"));
+            styleVariants = styleVariantRepo.findProductBySearchString(searchString,productFilters.getMasterCategories(),
+                    productFilters.getCategories(),productFilters.getSubCategories(),productFilters.getBrands(),productFilters.getGender(),
+                    productFilters.getColours(), productFilters.getSizes(),productFilters.getDiscountPercentage(),
+                    productFilters.getMinPrice(),productFilters.getMaxPrice(),
+                    pageRequest.withSort(Sort.Direction.DESC, "final_price"));
         }
         if (sortBy.equalsIgnoreCase(SortBy.LowToHigh.name())) {
-            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price, pageRequest.withSort(Sort.Direction.ASC, "final_price"));
+            styleVariants = styleVariantRepo.findProductBySearchString(searchString,productFilters.getMasterCategories(),
+                    productFilters.getCategories(),productFilters.getSubCategories(),productFilters.getBrands(),productFilters.getGender(),
+                    productFilters.getColours(), productFilters.getSizes(),productFilters.getDiscountPercentage(),
+                    productFilters.getMinPrice(),productFilters.getMaxPrice(),
+                    pageRequest.withSort(Sort.Direction.ASC, "final_price"));
         }
         if (sortBy.equalsIgnoreCase(SortBy.Popularity.name())) {
-            styleVariants = styleVariantRepo.findProductBySearchString(searchString, price, pageRequest.withSort(Sort.Direction.DESC, "product_avg_rating"));
+            styleVariants = styleVariantRepo.findProductBySearchString(searchString,productFilters.getMasterCategories(),
+                    productFilters.getCategories(),productFilters.getSubCategories(),productFilters.getBrands(),productFilters.getGender(),
+                    productFilters.getColours(), productFilters.getSizes(),productFilters.getDiscountPercentage(),
+                    productFilters.getMinPrice(),productFilters.getMaxPrice(),
+                    pageRequest.withSort(Sort.Direction.DESC, "product_avg_rating"));
         }
         if (styleVariants.hasContent()) {
             breadCrumbs.add(new BreadCrumb(searchString, null));
@@ -166,18 +148,12 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         return getProductFilter(styleVariantRepo.findFiltersBySearchString(searchString, price));
     }
 
-    @Override
-    public ProductFilters getProductParameterFilter(String masterCategoryName, String categoryName, String subCategoryName, String brand, String gender, String colour, Integer discountPercentage) {
-
-        return getProductFilter(styleVariantRepo.findFiltersByParameters(masterCategoryName, categoryName, subCategoryName,
-                brand, gender, colour, discountPercentage));
-    }
-
     public ProductFilters getProductFilter(List<ProductStyleVariant> styleVariants) {
         Set<String> masterCategories = new HashSet<>();
         Set<String> categories = new HashSet<>();
         Set<String> subCategories = new HashSet<>();
         Set<String> brands = new HashSet<>();
+        Set<String> genders = new HashSet<>();
         Set<ColourHexCode> colours = new HashSet<>();
         Set<String> sizes = new HashSet<>();
         Set<DiscountPercentage> discountPercentages = new HashSet<>();
@@ -191,6 +167,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             if (product.getSubCategory() != null)
                 subCategories.add(product.getSubCategory().getSubCategoryName());
             brands.add(product.getBrand().getBrandName());
+            genders.add(product.getGender().name());
             colours.add(new ColourHexCode(psv.getColour(), psv.getColourHexCode()));
             psv.getSizeDetails().forEach(sizeDetail -> {
                 if (sizeDetail.getSize() != null)
@@ -203,7 +180,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 minPrice.set(psv.getFinalPrice().intValue());
         });
 
-        return new ProductFilters(masterCategories, categories, subCategories, brands, colours, sizes,
+        return new ProductFilters(masterCategories, categories, subCategories, brands, genders,colours, sizes,
                 discountPercentages, BigDecimal.valueOf(maxPrice.intValue()), BigDecimal.valueOf(minPrice.intValue()));
     }
 
@@ -241,5 +218,48 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             });
         }
         return colourInfos;
+    }
+
+
+
+    //------------------------------------------------------------------------------------------------
+
+    @Override
+    public ListingPageDetails getProductListingParameters(String masterCategoryName, String categoryName, String subCategoryName, String brand,
+                                                          String gender, String colour, String size, Integer discountPercentage,
+                                                          Integer minPrice, Integer maxPrice, String sortBy, Integer pageNumber, Integer pageSize) {
+
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        Page<ProductStyleVariant> styleVariants = null;
+
+        if (sortBy.equalsIgnoreCase(SortBy.HighToLow.name())) {
+            styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
+                    colour, size, discountPercentage, minPrice, maxPrice,
+                    pageRequest.withSort(Sort.Direction.DESC, "final_price"));
+        }
+        if (sortBy.equalsIgnoreCase(SortBy.LowToHigh.name())) {
+            styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
+                    colour, size, discountPercentage, minPrice, maxPrice,
+                    pageRequest.withSort(Sort.Direction.ASC, "final_price"));
+        }
+        if (sortBy.equalsIgnoreCase(SortBy.Popularity.name())) {
+            styleVariants = styleVariantRepo.findProductByParameters(masterCategoryName, categoryName, subCategoryName, brand, gender,
+                    colour, size, discountPercentage, minPrice, maxPrice,
+                    pageRequest.withSort(Sort.Direction.DESC, "product_avg_rating"));
+        }
+        if (styleVariants.hasContent()) {
+            Product product = styleVariants.stream().findFirst().get().getProduct();
+            return new ListingPageDetails(getListingPageDetails(styleVariants), productGetService.getBreadCrumb(product),
+                    styleVariants.getTotalPages(), styleVariants.getNumber() + 1, styleVariants.getTotalElements(),
+                    styleVariants.getNumberOfElements(), styleVariants.hasNext());
+        }
+        return new ListingPageDetails();
+    }
+
+    @Override
+    public ProductFilters getProductParameterFilter(String masterCategoryName, String categoryName, String subCategoryName, String brand, String gender, String colour, Integer discountPercentage) {
+
+        return getProductFilter(styleVariantRepo.findFiltersByParameters(masterCategoryName, categoryName, subCategoryName,
+                brand, gender, colour, discountPercentage));
     }
 }

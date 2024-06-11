@@ -1,6 +1,7 @@
 package com.ecommerce.productservice.service.declaration;
 
 import com.ecommerce.productservice.dto.ProductFilters;
+import com.ecommerce.productservice.dto.request.ProductFilterReq;
 import com.ecommerce.productservice.dto.response.ColourInfo;
 import com.ecommerce.productservice.dto.response.ListingPageDetails;
 import com.ecommerce.productservice.dto.response.SingleProductResponse;
@@ -19,7 +20,7 @@ public interface ProductSearchService {
                                                    String gender, String colour, String size, Integer discountPercentage,
                                                    Integer minPrice, Integer maxPrice, String sortBy, Integer pageNumber, Integer pageSize);
 
-    ListingPageDetails getProductListingSearchString(String searchString, String sortBy, Integer page, Integer pageSize);
+    ListingPageDetails getProductListingSearchString(String searchString, ProductFilterReq productFilters, String sortBy, Integer page, Integer pageSize);
 
     ProductFilters getProductFilters(String searchString);
 
