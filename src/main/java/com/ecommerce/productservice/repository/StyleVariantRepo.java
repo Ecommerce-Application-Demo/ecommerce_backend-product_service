@@ -57,6 +57,7 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
     @Query(value = "SELECT psv.* " +
             "FROM product.product_style_variant psv " +
             "INNER JOIN product.product p ON psv.psv_product = p.product_id "+
+            "INNER JOIN product.size_details sd ON psv.style_id = sd.psv_id "+
             "WHERE to_tsvector('english', p.product_name || ' ' || p.product_category || ' ' || p.product_master_category || " +
             "COALESCE(p.product_sub_category,'') || ' ' || p.product_brand || ' ' || p.material || ' ' || p.gender || ' ' || p.product_description " +
             "|| ' ' || COALESCE(psv.colour,'') ) " +
