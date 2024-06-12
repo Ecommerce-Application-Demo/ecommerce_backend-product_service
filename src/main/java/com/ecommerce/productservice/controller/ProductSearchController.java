@@ -86,6 +86,27 @@ public class ProductSearchController {
         return new ResponseEntity<>(productService.getProductFilters(searchString,productFilterReq), HttpStatus.OK);
     }
 
+    @Operation(summary = "To get similar Products details of a specific product style")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Related Products",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ListingPageDetails.class)) }),
+            @ApiResponse(responseCode = "400", description = "Page number & Products per page fields must be greater than 0",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
+    })
+    @GetMapping("/product/related/{styleId}")
+    public ResponseEntity<ListingPageDetails> getSimilarProducts(@PathVariable(value ="styleId") String styleId,
+                                                                @RequestParam(required = false,defaultValue = "1") Integer pageNumber,
+                                                                @RequestParam(required = false,defaultValue = "6") Integer productsPerPage,
+                                                                @RequestParam(required = false,defaultValue = "popularity") String sortBy) throws ProductException {
+        if(pageNumber > 0 && productsPerPage > 0)
+            return new ResponseEntity<>(productService.getSimilarProducts(styleId,sortBy,pageNumber,productsPerPage), HttpStatus.OK);
+        else
+            throw new ProductException("INVALID_PAGINATION");
+    }
+
+
     @Operation(summary = "To get All Colour Variants of a Product")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Various colour of product both in & out of stock",

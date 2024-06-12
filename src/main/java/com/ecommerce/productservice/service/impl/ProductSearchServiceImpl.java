@@ -241,6 +241,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         return colourInfos;
     }
 
+    @Override
+    public ListingPageDetails getSimilarProducts(String styleId,String sortBy,Integer pageNumber,Integer productsPerPage){
+        ProductStyleVariant psv = styleVariantRepo.findById(styleId).get();
+        Integer minPrice = psv.getFinalPrice().intValue()-(psv.getFinalPrice().intValue()*50)/100;
+        Integer maxPrice = psv.getFinalPrice().intValue()+(psv.getFinalPrice().intValue()*50)/100;
+        return getProductListingParameters(null, psv.getProduct().getCategory().getCategoryName(),null,
+                null,null,null,null,null,minPrice, maxPrice,
+                sortBy,pageNumber,productsPerPage);
+    }
+
 
 
     //------------------------------------------------------------------------------------------------

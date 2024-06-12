@@ -16,6 +16,8 @@ public interface ProductSearchService {
 
     SingleProductResponse getSingleProductDetails(String styleId, String styleName);
 
+    ListingPageDetails getSimilarProducts(String styleId,String sortBy,Integer pageNumber,Integer productsPerPage);
+
     ListingPageDetails getProductListingParameters(String masterCategoryName, String categoryName, String subCategoryName, String brand,
                                                    String gender, String colour, String size, Integer discountPercentage,
                                                    Integer minPrice, Integer maxPrice, String sortBy, Integer pageNumber, Integer pageSize);
