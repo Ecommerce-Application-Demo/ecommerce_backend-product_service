@@ -2,7 +2,7 @@ package com.ecommerce.productservice.controller;
 
 import com.ecommerce.productservice.dto.response.DeliveryTimeResponse;
 import com.ecommerce.productservice.entity.Images;
-import com.ecommerce.productservice.exceptionhandler.ProductException;
+import com.ecommerce.productservice.exception.ProductException;
 import com.ecommerce.productservice.service.declaration.HelperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -8,8 +8,8 @@ import com.ecommerce.productservice.dto.request.SubCategoryRequest;
 import com.ecommerce.productservice.entity.*;
 import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
-import com.ecommerce.productservice.exceptionhandler.ErrorCode;
-import com.ecommerce.productservice.exceptionhandler.ProductException;
+import com.ecommerce.productservice.exception.ErrorCode;
+import com.ecommerce.productservice.exception.ProductException;
 import com.ecommerce.productservice.repository.*;
 import com.ecommerce.productservice.service.declaration.ProductAddService;
 import jakarta.transaction.Transactional;
@@ -113,7 +113,7 @@ public class ProductAddServiceImpl implements ProductAddService {
         BigDecimal finalPrice = psv.getMrp().subtract(psv.getDiscountPercentage().multiply(psv.getMrp()).divide(new BigDecimal(100), MathContext.DECIMAL128));
         psv.setFinalPrice(finalPrice);
         if(psv.getDiscountPercentage().intValue()>0)
-            psv.setDiscountPercentageText(psv.getDiscountPercentage() + "% OFF");
+            psv.setDiscountPercentageText(psv.getDiscountPercentage().intValue() + "% OFF");
         else
             psv.setDiscountPercentageText(null);
 

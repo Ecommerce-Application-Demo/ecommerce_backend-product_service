@@ -1,7 +1,7 @@
 package com.ecommerce.productservice.service.declaration;
 
 import com.ecommerce.productservice.dto.response.DeliveryTimeResponse;
-import com.ecommerce.productservice.exceptionhandler.ProductException;
+import com.ecommerce.productservice.exception.ProductException;
 
 import java.util.Map;
 

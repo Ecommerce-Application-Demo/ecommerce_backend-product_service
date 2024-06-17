@@ -227,15 +227,19 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         Set<ColourInfo> colourInfos = new HashSet<>();
         if (!productStyleVariantList.isEmpty()) {
             productStyleVariantList.forEach(psv -> {
-                AtomicBoolean flag = new AtomicBoolean(false);
+                AtomicBoolean isInStock = new AtomicBoolean(false);
+                AtomicBoolean onlyFewLeft = new AtomicBoolean(false);
                 getSizes(psv.getStyleId()).forEach(size -> {
-                    if (size.quantity() != null && size.quantity() > 0)
-                        flag.set(true);
+                    if (size.quantity() != null && size.quantity() > 0) {
+                        isInStock.set(true);
+                        if (size.quantity() <= 10)
+                            onlyFewLeft.set(true);
+                    }
                 });
-                if (flag.get())
-                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(), psv.getColourHexCode(), psv.getImages().getImage1(), true));
+                if (isInStock.get())
+                    colourInfos.add(new ColourInfo(psv.getStyleId(),psv.getStyleName(), psv.getColour(), psv.getColourHexCode(), psv.getImages().getImage1(), onlyFewLeft.get(),true));
                 else
-                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getColour(), psv.getColourHexCode(), psv.getImages().getImage1(), false));
+                    colourInfos.add(new ColourInfo(psv.getStyleId(), psv.getStyleName(),psv.getColour(), psv.getColourHexCode(), psv.getImages().getImage1(), onlyFewLeft.get(),false));
             });
         }
         return colourInfos;

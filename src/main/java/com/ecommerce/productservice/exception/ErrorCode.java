@@ -1,4 +1,4 @@
-package com.ecommerce.productservice.exceptionhandler;
+package com.ecommerce.productservice.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

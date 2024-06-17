@@ -6,7 +6,7 @@ import com.ecommerce.productservice.dto.response.ColourInfo;
 import com.ecommerce.productservice.dto.response.ListingPageDetails;
 import com.ecommerce.productservice.dto.response.SingleProductResponse;
 import com.ecommerce.productservice.dto.response.SizeInfo;
-import com.ecommerce.productservice.exceptionhandler.ProductException;
+import com.ecommerce.productservice.exception.ProductException;
 import com.ecommerce.productservice.service.declaration.ProductSearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

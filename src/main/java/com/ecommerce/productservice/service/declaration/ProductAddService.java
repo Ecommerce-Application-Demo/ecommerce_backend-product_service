@@ -8,7 +8,7 @@ import com.ecommerce.productservice.dto.request.SubCategoryRequest;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
-import com.ecommerce.productservice.exceptionhandler.ProductException;
+import com.ecommerce.productservice.exception.ProductException;
 
 import java.util.List;
 

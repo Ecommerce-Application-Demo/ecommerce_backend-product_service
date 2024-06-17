@@ -1,4 +1,4 @@
-package com.ecommerce.productservice.exceptionhandler;
+package com.ecommerce.productservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
