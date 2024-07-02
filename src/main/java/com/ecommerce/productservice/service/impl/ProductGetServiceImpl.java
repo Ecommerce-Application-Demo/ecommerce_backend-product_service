@@ -5,6 +5,7 @@ import com.ecommerce.productservice.dto.response.BreadCrumb;
 import com.ecommerce.productservice.dto.response.ProductResponse;
 import com.ecommerce.productservice.entity.Product;
 import com.ecommerce.productservice.entity.ReviewRating;
+import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
 import com.ecommerce.productservice.repository.*;
 import com.ecommerce.productservice.service.declaration.ProductGetService;
@@ -131,6 +132,11 @@ public class ProductGetServiceImpl implements ProductGetService {
         } else {
             return warehouseRepo.findAll();
         }
+    }
+
+    @Override
+    public List<Inventory> getInventory(String skuId) {
+        return inventoryRepo.findBySkuId(skuId);
     }
 
     protected List<BreadCrumb> getBreadCrumb(Product product) {

@@ -3,6 +3,7 @@ package com.ecommerce.productservice.service.declaration;
 import com.ecommerce.productservice.dto.*;
 import com.ecommerce.productservice.dto.response.ProductResponse;
 import com.ecommerce.productservice.entity.ReviewRating;
+import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
 
 import java.util.List;
@@ -25,4 +26,5 @@ public interface ProductGetService {
 
     List<Warehouse> getWarehouse(Integer warehouseId);
 
+    List<Inventory> getInventory(String skuId);
 }

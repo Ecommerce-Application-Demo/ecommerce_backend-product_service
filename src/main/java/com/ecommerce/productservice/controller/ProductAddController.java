@@ -12,6 +12,7 @@ import com.ecommerce.productservice.exception.ErrorResponse;
 import com.ecommerce.productservice.exception.ProductException;
 import com.ecommerce.productservice.service.declaration.ProductAddService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -166,7 +167,7 @@ public class ProductAddController {
                             schema = @Schema(implementation = Inventory.class)) }),
             @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)) })
+                            array = @ArraySchema(schema = @Schema(implementation = ErrorResponse.class))) })
     })
     @PostMapping("/product/inventory")
     public ResponseEntity<List<Inventory>> addInventory(@RequestBody List<Inventory> inventory){

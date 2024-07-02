@@ -4,8 +4,8 @@ import com.ecommerce.productservice.dto.response.DeliveryTimeResponse;
 import com.ecommerce.productservice.entity.Images;
 import com.ecommerce.productservice.exception.ErrorResponse;
 import com.ecommerce.productservice.exception.ProductException;
-import com.ecommerce.productservice.repository.StyleVariantRepo;
 import com.ecommerce.productservice.service.declaration.HelperService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,9 +30,8 @@ public class ProductHelperController {
     HelperService helperService;
     @Autowired
     Environment environment;
-    @Autowired
-    private StyleVariantRepo styleVariantRepo;
 
+    @Hidden
     @Operation(summary = "Returns modified image URLs with new height,width & quality")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Modified Image URLs",

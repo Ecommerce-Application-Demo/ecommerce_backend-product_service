@@ -21,7 +21,7 @@ public class Warehouse implements Serializable {
     private String warehouseName;
     private String warehouseAddress;
     private String warehousePincode;
-    private String warehouse_email;
+    private String warehouseEmail;
     private String serviceablePincodeZones;
 
 }
