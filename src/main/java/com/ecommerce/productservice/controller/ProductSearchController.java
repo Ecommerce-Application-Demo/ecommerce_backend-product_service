@@ -6,8 +6,10 @@ import com.ecommerce.productservice.dto.response.ColourInfo;
 import com.ecommerce.productservice.dto.response.ListingPageDetails;
 import com.ecommerce.productservice.dto.response.SingleProductResponse;
 import com.ecommerce.productservice.dto.response.SizeInfo;
+import com.ecommerce.productservice.exception.ErrorResponse;
 import com.ecommerce.productservice.exception.ProductException;
 import com.ecommerce.productservice.service.declaration.ProductSearchService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,9 +49,7 @@ public class ProductSearchController {
 
 
     @Operation(summary = "To get Product details for Product Listing Page with any Search String")
-    @Parameter(name = "productFilters",description = "All the required filters of Product")
     @Parameter(name = "pageNumber",description = "Number of the page to return")
-    @Parameter(name = "numberOfItem",description = "Number of item of the page to return")
     @Parameter(name = "sortBy", description = "Sort results by 'popularity', 'HighToLow' & 'LowToHigh' price")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product Listing Page details for Specified Search String with Pagination."+
@@ -58,12 +59,12 @@ public class ProductSearchController {
                             schema = @Schema(implementation = ListingPageDetails.class)) }),
             @ApiResponse(responseCode = "400", description = "Page number & Products per page fields must be greater than 0",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class)) })
+                            schema = @Schema(implementation = ErrorResponse.class)) })
     })
     @GetMapping("/product/listing/{searchString}")
     public ResponseEntity<ListingPageDetails> getProductListingSearchString(
             @PathVariable(value = "searchString") String searchString,
-            ProductFilterReq productFilters,
+            @ParameterObject @ModelAttribute ProductFilterReq productFilters,
             @RequestParam(required = false,defaultValue = "1") Integer pageNumber,
             @RequestParam(required = false,defaultValue = "6") Integer productsPerPage,
             @RequestParam(required = false,defaultValue = "popularity") String sortBy) throws ProductException {
@@ -82,7 +83,8 @@ public class ProductSearchController {
     })
     @GetMapping("/product/filters/{searchString}")
     public ResponseEntity<ProductFilters> getProductFilter(@PathVariable(value = "searchString") String searchString,
-                                                           ProductFilterReq productFilterReq){
+                                                           @ParameterObject @ModelAttribute ProductFilterReq productFilterReq
+                                                           ){
         return new ResponseEntity<>(productService.getProductFilters(searchString,productFilterReq), HttpStatus.OK);
     }
 
@@ -93,7 +95,7 @@ public class ProductSearchController {
                             schema = @Schema(implementation = ListingPageDetails.class)) }),
             @ApiResponse(responseCode = "400", description = "Page number & Products per page fields must be greater than 0",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class)) })
+                            schema = @Schema(implementation = ErrorResponse.class)) })
     })
     @GetMapping("/product/related/{styleId}")
     public ResponseEntity<ListingPageDetails> getSimilarProducts(@PathVariable(value ="styleId") String styleId,
@@ -136,6 +138,7 @@ public class ProductSearchController {
     //----------------------------------------------------------------------------------------------------
 
 
+    @Hidden
     @Operation(summary = "To get Product details for Product Listing Page with Parameters")
     @Parameter(name = "pageNumber",description = "Number of the page to return")
     @Parameter(name = "numberOfItem",description = "Number of item of the page to return")
@@ -146,7 +149,7 @@ public class ProductSearchController {
                             schema = @Schema(implementation = ListingPageDetails.class)) }),
             @ApiResponse(responseCode = "400", description = "Page number & Products per page fields must be greater than 0",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class)) })
+                            schema = @Schema(implementation = ErrorResponse.class)) })
     })
     @GetMapping("/product/listing")
     public ResponseEntity<ListingPageDetails> getProductListingParameters(
@@ -170,6 +173,7 @@ public class ProductSearchController {
             throw new ProductException("INVALID_PAGINATION");
     }
 
+    @Hidden
     @Operation(summary = "Get all applicable Filter list for specified Search Parameters")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product applicable filters",

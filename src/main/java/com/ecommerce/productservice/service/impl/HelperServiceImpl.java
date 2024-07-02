@@ -56,13 +56,13 @@ public class HelperServiceImpl implements HelperService {
             Map<Warehouse, Integer> deliveryTimeMap = distanceFromWarehouse(pincode, warehouseList);
 
             if (!deliveryTimeMap.isEmpty()) {
-                deliveryTimeMap.forEach((warehouse, integer) -> {
+                deliveryTimeMap.forEach((warehouse, time) -> {
                     Calendar cal = Calendar.getInstance();
-                    cal.add(Calendar.DAY_OF_MONTH, integer);
+                    cal.add(Calendar.DAY_OF_MONTH, time);
                     String response = AVAILABILITY_SUCCESS_MESSAGE + cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()) + ", "
                             + String.format("%02d", cal.get(Calendar.DAY_OF_MONTH)) + " " + cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault());
 
-                    timeDetailsList.add(new DeliveryTimeDetails(response, warehouse));
+                    timeDetailsList.add(new DeliveryTimeDetails(response,time.toString(), warehouse));
                 });
 
             } else {
@@ -97,7 +97,7 @@ public class HelperServiceImpl implements HelperService {
                     PincodeDetails to = pincodeRepo.findById(warehouse.getWarehousePincode()).get();
                     PincodeDetails from = pincodeRepo.findById(pincode).get();
                     float distance = distance(to.getLatitude(), to.getLongitude(), from.getLatitude(), from.getLongitude());
-                    Integer timeToDeliver = Math.round(distance / 150) + 1;
+                    Integer timeToDeliver = Math.round(distance / 150);
                     deliveryTimeMap.put(warehouse, timeToDeliver);
                 }
             });

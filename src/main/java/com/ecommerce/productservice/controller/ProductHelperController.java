@@ -2,7 +2,9 @@ package com.ecommerce.productservice.controller;
 
 import com.ecommerce.productservice.dto.response.DeliveryTimeResponse;
 import com.ecommerce.productservice.entity.Images;
+import com.ecommerce.productservice.exception.ErrorResponse;
 import com.ecommerce.productservice.exception.ProductException;
+import com.ecommerce.productservice.repository.StyleVariantRepo;
 import com.ecommerce.productservice.service.declaration.HelperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,6 +30,8 @@ public class ProductHelperController {
     HelperService helperService;
     @Autowired
     Environment environment;
+    @Autowired
+    private StyleVariantRepo styleVariantRepo;
 
     @Operation(summary = "Returns modified image URLs with new height,width & quality")
     @ApiResponses(value = {
@@ -52,7 +56,7 @@ public class ProductHelperController {
                             schema = @Schema(implementation = DeliveryTimeResponse.class)) }),
             @ApiResponse(responseCode = "406", description = "Uh-oh! We can't deliver there.Try a new address!",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class))})
+                            schema = @Schema(implementation = ErrorResponse.class))})
     })
     @GetMapping("/isDeliverable")
     public ResponseEntity<DeliveryTimeResponse> delivery(@RequestParam String pincode,
@@ -67,9 +71,9 @@ public class ProductHelperController {
                             schema = @Schema(implementation = Boolean.class)) }),
             @ApiResponse(responseCode = "400", description = "API Secret is Invalid",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class))})
+                            schema = @Schema(implementation = ErrorResponse.class))})
     })
-    @GetMapping("/api-secret")
+    @PostMapping(value = "/api-secret", consumes = "text/plain" )
     public ResponseEntity<Boolean> apiKeyValidation(@RequestBody String apiSecret) throws ProductException {
        return new ResponseEntity<>(helperService.validateApiKey(apiSecret), HttpStatus.OK);
     }
