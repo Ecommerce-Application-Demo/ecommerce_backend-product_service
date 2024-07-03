@@ -1,10 +1,7 @@
 package com.ecommerce.productservice.service.impl;
 
 import com.ecommerce.productservice.dto.*;
-import com.ecommerce.productservice.dto.request.CategoryRequest;
-import com.ecommerce.productservice.dto.request.ProductRequest;
-import com.ecommerce.productservice.dto.request.StyleVariantRequest;
-import com.ecommerce.productservice.dto.request.SubCategoryRequest;
+import com.ecommerce.productservice.dto.request.*;
 import com.ecommerce.productservice.entity.*;
 import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,6 +90,7 @@ public class ProductAddServiceImpl implements ProductAddService {
         ReviewRating reviewRatingResponse;
         ProductStyleVariant psv=styleVariantRepo.findById(reviewRating.getStyleId()).orElse(null);
         if( psv != null) {
+            reviewRating.setCreatedTimestamp(LocalDateTime.now());
             reviewRatingResponse = reviewRatingRepo.save(reviewRating);
             psv.setProductAvgRating(reviewRatingRepo.findAvgRating(psv.getStyleId()));
             psv.setReviewCount(reviewRatingRepo.findCountByStyleId(psv.getStyleId()));
@@ -130,9 +129,20 @@ public class ProductAddServiceImpl implements ProductAddService {
     }
 
     @Override
-    public List<Inventory> addInventory(List<Inventory> inventory){
-        inventory=inventoryRepo.saveAll(inventory);
-        inventory.forEach(inv -> inventoryRepo.updateQuantity(inv.getSkuId()) );
-        return  inventory;
+    public List<Inventory> addInventory(List<InventoryReq> inventory){
+        List<Inventory> inventoryList = new ArrayList<>();
+        inventory.forEach(inv -> {
+            if(inventoryRepo.findByWarehouse_WarehouseIdAndSkuId(inv.warehouseId(),inv.skuId())==null)
+                    warehouseRepo.findById(inv.warehouseId()).ifPresent(
+                            warehouse -> inventoryList.add(new Inventory(null, inv.skuId(), warehouse, inv.quantity())));
+                }
+            );
+        return inventoryRepo.saveAll(inventoryList).stream()
+                .peek(inv-> inventoryRepo.updateQuantity(inv.getSkuId())).toList();
+    }
+
+    @Override
+    public Inventory editInventory(Inventory inventory){
+        return inventoryRepo.save(inventory);
     }
 }

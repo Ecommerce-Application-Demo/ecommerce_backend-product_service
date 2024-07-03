@@ -1,10 +1,7 @@
 package com.ecommerce.productservice.service.declaration;
 
 import com.ecommerce.productservice.dto.*;
-import com.ecommerce.productservice.dto.request.CategoryRequest;
-import com.ecommerce.productservice.dto.request.ProductRequest;
-import com.ecommerce.productservice.dto.request.StyleVariantRequest;
-import com.ecommerce.productservice.dto.request.SubCategoryRequest;
+import com.ecommerce.productservice.dto.request.*;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
@@ -30,5 +27,7 @@ public interface ProductAddService {
 
     Warehouse addWarehouse(Warehouse warehouse);
 
-    List<Inventory> addInventory(List<Inventory> inventory);
+    List<Inventory> addInventory(List<InventoryReq> inventory);
+
+    Inventory editInventory(Inventory inventory);
 }

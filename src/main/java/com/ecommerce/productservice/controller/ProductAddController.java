@@ -1,10 +1,7 @@
 package com.ecommerce.productservice.controller;
 
 import com.ecommerce.productservice.dto.*;
-import com.ecommerce.productservice.dto.request.CategoryRequest;
-import com.ecommerce.productservice.dto.request.ProductRequest;
-import com.ecommerce.productservice.dto.request.StyleVariantRequest;
-import com.ecommerce.productservice.dto.request.SubCategoryRequest;
+import com.ecommerce.productservice.dto.request.*;
 import com.ecommerce.productservice.entity.ReviewRating;
 import com.ecommerce.productservice.entity.warehousemanagement.Inventory;
 import com.ecommerce.productservice.entity.warehousemanagement.Warehouse;
@@ -25,10 +22,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -170,7 +164,21 @@ public class ProductAddController {
                             array = @ArraySchema(schema = @Schema(implementation = ErrorResponse.class))) })
     })
     @PostMapping("/product/inventory")
-    public ResponseEntity<List<Inventory>> addInventory(@RequestBody List<Inventory> inventory){
+    public ResponseEntity<List<Inventory>> addInventory(@RequestBody @Valid List<@Valid InventoryReq> inventory){
         return new ResponseEntity<>(productService.addInventory(inventory), HttpStatus.OK);
+    }
+
+    @Operation(summary = "To Edit Product Style Inventory Details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product Style Inventory edited",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Inventory.class)) }),
+            @ApiResponse(responseCode = "401", description = "API Secret is Invalid or API Secret is Invalid",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ErrorResponse.class))) })
+    })
+    @PutMapping("/product/inventory")
+    public ResponseEntity<Inventory> editInventory(@RequestBody  Inventory inventory){
+        return new ResponseEntity<>(productService.editInventory(inventory), HttpStatus.OK);
     }
 }

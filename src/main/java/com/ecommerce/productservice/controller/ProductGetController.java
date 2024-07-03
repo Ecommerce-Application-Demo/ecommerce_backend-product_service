@@ -70,7 +70,7 @@ public class ProductGetController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Get all Brand.",
                     content = {@Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = String.class)))}),
+                            array = @ArraySchema(schema = @Schema(implementation = BrandDto.class)))}),
     })
     @GetMapping("/brand")
     public ResponseEntity<List<BrandDto>> getBrand() {

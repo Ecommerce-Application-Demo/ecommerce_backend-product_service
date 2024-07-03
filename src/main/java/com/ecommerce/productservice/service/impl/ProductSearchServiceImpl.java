@@ -7,6 +7,7 @@ import com.ecommerce.productservice.dto.response.*;
 import com.ecommerce.productservice.entity.Product;
 import com.ecommerce.productservice.entity.ProductStyleVariant;
 import com.ecommerce.productservice.repository.ProductRepo;
+import com.ecommerce.productservice.repository.ReviewRatingRepo;
 import com.ecommerce.productservice.repository.StyleVariantRepo;
 import com.ecommerce.productservice.service.declaration.ProductSearchService;
 import org.modelmapper.ModelMapper;
@@ -32,11 +33,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     @Autowired
     ProductGetServiceImpl productGetService;
     @Autowired
+    ReviewRatingRepo reviewRatingRepo;
+    @Autowired
     ModelMapper modelMapper;
 
     @Override
     public SingleProductResponse getSingleProductDetails(String styleId, String styleName) {
+
         ProductStyleVariant styleVariant = styleVariantRepo.findSingleStyle(styleId, styleName);
+
         if (styleVariant != null) {
             SingleProductResponse res = modelMapper.map(styleVariant, SingleProductResponse.class);
             styleVariant.getSizeDetails().forEach(size -> {
@@ -46,6 +51,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                         res.setOnlyFewLeft(true);
                 }
             });
+
             Product product = productRepo.findById(res.getProductId()).get();
             res.setProductDescription(product.getProductDescription());
             res.setMaterial(product.getMaterial());
@@ -59,6 +65,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
             res.set14dayReturnable(true);
             res.setCashOnDeliveryAvailable(true);
             res.setBreadCrumbList(productGetService.getBreadCrumb(product));
+
             List<SizeInfo> sizes = new ArrayList<>();
             if (!styleVariant.getSizeDetails().isEmpty()) {
                 styleVariant.getSizeDetails().forEach(sizeDetails -> {
@@ -66,6 +73,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 });
             }
             res.setSizes(sizes);
+
+            ReviewRatingResponse ratingResponse=new ReviewRatingResponse();
+            ratingResponse.setAllReviewAndRating(reviewRatingRepo.findAllByStyleId(styleId));
+            ratingResponse.setCountPerRating(reviewRatingRepo.findRatingCountByStyleId(styleId));
+            ratingResponse.setProductAvgRating(styleVariant.getProductAvgRating().toString());
+            ratingResponse.setReviewCount(styleVariant.getReviewCount().toString());
+            res.setReviewRating(ratingResponse);
+
             return res;
         }
         return new SingleProductResponse();

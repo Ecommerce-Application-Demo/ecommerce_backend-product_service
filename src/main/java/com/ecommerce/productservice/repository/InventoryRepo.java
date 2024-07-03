@@ -28,4 +28,6 @@ public interface InventoryRepo extends ListCrudRepository<Inventory, String> {
 
      @Modifying
      void deleteBySkuId(String skuId);
+
+     Inventory findByWarehouse_WarehouseIdAndSkuId(Integer warehouseId, String skuId);
 }
