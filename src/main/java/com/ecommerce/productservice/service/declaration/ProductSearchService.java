@@ -8,6 +8,7 @@ import com.ecommerce.productservice.dto.response.SingleProductResponse;
 import com.ecommerce.productservice.dto.response.SizeInfo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface ProductSearchService {
@@ -24,7 +25,7 @@ public interface ProductSearchService {
 
     ListingPageDetails getProductListingSearchString(String searchString, ProductFilterReq productFilters, String sortBy, Integer page, Integer pageSize);
 
-    ProductFilters getProductFilters(String searchString, ProductFilterReq productFilters);
+    ProductFilters getProductFilters(String searchString, ProductFilterReq productFilters,Map<String,Set> latestAppliedFilter);
 
     Set<ColourInfo> getColours(String productId, String styleId);
 }

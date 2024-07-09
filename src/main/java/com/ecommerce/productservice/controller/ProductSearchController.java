@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -75,6 +76,10 @@ public class ProductSearchController {
     }
 
     @Operation(summary = "Get all applicable Filter list for specified Search String")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content =
+    @Content(mediaType = "application/json",
+            schema = @Schema(example = """
+                    {"sizes": ["S","L","M"]}""")) )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product applicable filters",
                     content = {@Content(mediaType = "application/json",
@@ -82,9 +87,10 @@ public class ProductSearchController {
     })
     @GetMapping("/product/filters/{searchString}")
     public ResponseEntity<ProductFilters> getProductFilter(@PathVariable(value = "searchString") String searchString,
-                                                           @ParameterObject @ModelAttribute ProductFilterReq productFilterReq
+                                                           @ParameterObject @ModelAttribute ProductFilterReq productFilterReq,
+                                                           @RequestBody(required = false) Map<String, Set> latestAppliedFilter
     ) {
-        return new ResponseEntity<>(productService.getProductFilters(searchString, productFilterReq), HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProductFilters(searchString, productFilterReq, latestAppliedFilter), HttpStatus.OK);
     }
 
     @Operation(summary = "To get similar Products details of a specific product style")
