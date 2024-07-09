@@ -168,23 +168,4 @@ public class ProductSearchController {
             throw new ProductException("INVALID_PAGINATION");
     }
 
-    @Hidden
-    @Operation(summary = "Get all applicable Filter list for specified Search Parameters")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Product applicable filters",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ProductFilters.class))})
-    })
-    @GetMapping("/product/filters")
-    public ResponseEntity<ProductFilters> getProductParameterFilter(
-            @RequestParam(required = false) String masterCategoryName,
-            @RequestParam(required = false) String categoryName,
-            @RequestParam(required = false) String subCategoryName,
-            @RequestParam(required = false) String brand,
-            @RequestParam(required = false) String gender,
-            @RequestParam(required = false) String colour,
-            @RequestParam(required = false) Integer discountPercentage) {
-        return new ResponseEntity<>(productService.getProductParameterFilter(masterCategoryName, categoryName, subCategoryName, brand,
-                gender, colour, discountPercentage), HttpStatus.OK);
-    }
 }

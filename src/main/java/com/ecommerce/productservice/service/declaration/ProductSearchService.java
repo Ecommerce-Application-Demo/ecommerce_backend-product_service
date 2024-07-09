@@ -26,7 +26,5 @@ public interface ProductSearchService {
 
     ProductFilters getProductFilters(String searchString, ProductFilterReq productFilters);
 
-    ProductFilters getProductParameterFilter(String masterCategoryName, String categoryName, String subCategoryName, String brand, String gender, String colour, Integer discountPercentage);
-
     Set<ColourInfo> getColours(String productId, String styleId);
 }
