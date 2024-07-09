@@ -34,7 +34,7 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
             "FROM product.product_style_variant psv " +
             "INNER JOIN product.product p ON psv.psv_product = p.product_id "+
             "INNER JOIN product.size_details sd ON psv.style_id = sd.psv_id "+
-            "WHERE p.searchable_text @@ plainto_tsquery('english', ?1) " +
+            "WHERE psv.searchable_text @@ plainto_tsquery('english', ?1) " +
             "AND (p.product_master_category = ANY(CAST(?2 AS text[])) OR CAST(?2 AS text[]) IS NULL)" +
             "AND (p.product_category = ANY(CAST(?3 AS text[])) OR CAST(?3 AS text[]) IS NULL) " +
             "AND (p.product_sub_category = ANY(CAST(?4 AS text[])) OR CAST(?4 AS text[]) IS NULL) " +
@@ -55,7 +55,7 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
             "FROM product.product_style_variant psv " +
             "INNER JOIN product.product p ON psv.psv_product = p.product_id " +
             "LEFT JOIN product.size_details sd ON psv.style_id = sd.psv_id " +
-            "WHERE p.searchable_text @@ plainto_tsquery('english', ?1) " +
+            "WHERE psv.searchable_text @@ plainto_tsquery('english', ?1) " +
             "AND (p.product_master_category = ANY(CAST(?2 AS text[])) OR CAST(?2 AS text[]) IS NULL) " +
             "AND (p.product_category = ANY(CAST(?3 AS text[])) OR CAST(?3 AS text[]) IS NULL) " +
             "AND (p.product_sub_category = ANY(CAST(?4 AS text[])) OR CAST(?4 AS text[]) IS NULL) " +

@@ -165,7 +165,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     }
 
     @Override
-    public ProductFilters getProductFilters(String searchString, ProductFilterReq productFilterReq,Map<String,Set> latestAppliedFilter) {
+    public ProductFilters getProductFilters(String searchString, ProductFilterReq productFilterReq, Map<String, Set> latestAppliedFilter) {
         String[] searchString2;
         searchString = searchString.replaceAll("-", " ");
         if (productFilterReq.getMaxPrice() == null) {
@@ -187,36 +187,36 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         productFilters.setDiscountPercentages(g.fromJson(filters.get("discount").toString(), new TypeToken<Set<DiscountPercentage>>() {
         }.getType()));
         if (latestAppliedFilter != null) {
-           Set<String> s= latestAppliedFilter.keySet();
-           Set value= latestAppliedFilter.get(s.stream().findFirst().get());
-           if(value!=null) {
-               switch (s.stream().findFirst().get()) {
+            Set<String> s = latestAppliedFilter.keySet();
+            Set value = latestAppliedFilter.get(s.stream().findFirst().get());
+            if (value != null) {
+                switch (s.stream().findFirst().get()) {
 
-                   case "masterCategories":
-                       productFilters.setMasterCategories(value);
-                       break;
-                   case "categories":
-                       productFilters.setCategories(value);
-                       break;
-                   case "subCategories":
-                       productFilters.setSubCategories(value);
-                       break;
-                   case "brands":
-                       productFilters.setBrands(value);
-                       break;
-                   case "gender":
-                       productFilters.setGender(value);
-                       break;
-                   case "colours":
-                       productFilters.setColours(value);
-                       break;
-                   case "sizes":
-                       productFilters.setSizes(value);
-                       break;
-                   case "discountPercentages":
-                       productFilters.setDiscountPercentages(value);
-                       break;
-               }
+                    case "masterCategories":
+                        productFilters.setMasterCategories(value);
+                        break;
+                    case "categories":
+                        productFilters.setCategories(value);
+                        break;
+                    case "subCategories":
+                        productFilters.setSubCategories(value);
+                        break;
+                    case "brands":
+                        productFilters.setBrands(value);
+                        break;
+                    case "gender":
+                        productFilters.setGender(value);
+                        break;
+                    case "colours":
+                        productFilters.setColours(value);
+                        break;
+                    case "sizes":
+                        productFilters.setSizes(value);
+                        break;
+                    case "discountPercentages":
+                        productFilters.setDiscountPercentages(value);
+                        break;
+                }
 
             }
         }
