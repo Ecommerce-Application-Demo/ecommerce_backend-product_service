@@ -55,17 +55,17 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
             "FROM product.product_style_variant psv " +
             "INNER JOIN product.product p ON psv.psv_product = p.product_id " +
             "LEFT JOIN product.size_details sd ON psv.style_id = sd.psv_id " +
-            "WHERE psv.searchable_text @@ plainto_tsquery('english', ?1) " +
-            "AND (p.product_master_category = ANY(CAST(?2 AS text[])) OR CAST(?2 AS text[]) IS NULL) " +
-            "AND (p.product_category = ANY(CAST(?3 AS text[])) OR CAST(?3 AS text[]) IS NULL) " +
-            "AND (p.product_sub_category = ANY(CAST(?4 AS text[])) OR CAST(?4 AS text[]) IS NULL) " +
-            "AND (p.product_brand = ANY(CAST(?5 AS text[])) OR CAST(?5 AS text[]) IS NULL) " +
-            "AND (p.gender = ANY(CAST(?6 AS text[])) OR CAST(?6 AS text[]) IS NULL) " +
-            "AND (psv.colour = ANY(CAST(?7 AS text[])) OR CAST(?7 AS text[]) IS NULL) " +
-            "AND (sd.size = ANY(CAST(?8 AS text[])) OR CAST(?8 AS text[]) IS NULL) " +
-            "AND (psv.discount_percentage >= CAST(?9 AS numeric) OR CAST(?9 AS numeric) IS NULL) " +
-            "AND (psv.final_price >= CAST(?10 AS numeric) OR CAST(?10 AS numeric) IS NULL) " +
-            "AND (psv.final_price <= CAST(?11 AS numeric) OR CAST(?11 AS numeric) IS NULL)) " +
+            "WHERE psv.searchable_text @@ plainto_tsquery('english', ?1) ) " +
+//            "AND (p.product_master_category = ANY(CAST(?2 AS text[])) OR CAST(?2 AS text[]) IS NULL) " +
+//            "AND (p.product_category = ANY(CAST(?3 AS text[])) OR CAST(?3 AS text[]) IS NULL) " +
+//            "AND (p.product_sub_category = ANY(CAST(?4 AS text[])) OR CAST(?4 AS text[]) IS NULL) " +
+//            "AND (p.product_brand = ANY(CAST(?5 AS text[])) OR CAST(?5 AS text[]) IS NULL) " +
+//            "AND (p.gender = ANY(CAST(?6 AS text[])) OR CAST(?6 AS text[]) IS NULL) " +
+//            "AND (psv.colour = ANY(CAST(?7 AS text[])) OR CAST(?7 AS text[]) IS NULL) " +
+//            "AND (sd.size = ANY(CAST(?8 AS text[])) OR CAST(?8 AS text[]) IS NULL) " +
+//            "AND (psv.discount_percentage >= CAST(?9 AS numeric) OR CAST(?9 AS numeric) IS NULL) " +
+//            "AND (psv.final_price >= CAST(?10 AS numeric) OR CAST(?10 AS numeric) IS NULL) " +
+//            "AND (psv.final_price <= CAST(?11 AS numeric) OR CAST(?11 AS numeric) IS NULL)) " +
             "SELECT " +
             "array_agg(DISTINCT master_category) AS masterCategories, " +
             "array_agg(DISTINCT category) AS categories, " +
@@ -97,7 +97,6 @@ public interface StyleVariantRepo extends JpaRepository<ProductStyleVariant, Str
     Map<String, Object> findFilters(String searchInput, String[] masterCategoryName, String[] categoryName,
                                     String[] subCategoryName, String[] brandName, String[] gender, String[] colour,
                                     String[] size, Integer discountPercentage, Integer minPrice, Integer maxPrice);
-
 
 
     //------------------------------------------------------------------------------------------------------------------------

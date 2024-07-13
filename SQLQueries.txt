@@ -63,7 +63,7 @@ FOR EACH ROW EXECUTE FUNCTION update_searchable_text();
 
 
 -- ############################## Indexes ################################
-CREATE INDEX idx_searchable_text ON product.product USING gin(searchable_text);
+CREATE INDEX idx_searchable_text ON product.product_style_variant USING gin(searchable_text);
 CREATE INDEX idx_product_style_variant_product_id ON product.product_style_variant (psv_product);
 CREATE INDEX idx_product_product_id ON product.product (product_id);
 CREATE INDEX idx_size_details_style_id ON product.size_details (psv_id);

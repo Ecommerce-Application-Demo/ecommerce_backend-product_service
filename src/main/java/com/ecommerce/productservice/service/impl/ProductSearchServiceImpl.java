@@ -121,22 +121,25 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                     pageRequest.withSort(Sort.Direction.ASC, "final_price"));
         }
 
+        if (searchString.equalsIgnoreCase("tshirts") || searchString.equalsIgnoreCase("t shirts")
+                || searchString.equalsIgnoreCase("t-shirts")) {
+            breadCrumbs.add(new BreadCrumb("T-Shirts For Men & Women", null));
+        } else if (searchString.equalsIgnoreCase("shirts")) {
+            breadCrumbs.add(new BreadCrumb("Shirts For Men & Women", null));
+        } else if (searchString.equalsIgnoreCase("jeans") || searchString.equalsIgnoreCase("jean")) {
+            breadCrumbs.add(new BreadCrumb("Jeans For Men & Women", null));
+        } else {
+            breadCrumbs.add(new BreadCrumb(searchString, null));
+        }
+
         if (styleVariants.hasContent()) {
-            if (searchString.equalsIgnoreCase("tshirts") || searchString.equalsIgnoreCase("t shirts")
-                    || searchString.equalsIgnoreCase("t-shirts")) {
-                breadCrumbs.add(new BreadCrumb("T-Shirts For Men & Women", null));
-            } else if (searchString.equalsIgnoreCase("shirts")) {
-                breadCrumbs.add(new BreadCrumb("Shirts For Men & Women", null));
-            } else if (searchString.equalsIgnoreCase("jeans") || searchString.equalsIgnoreCase("jean")) {
-                breadCrumbs.add(new BreadCrumb("Jeans For Men & Women", null));
-            } else {
-                breadCrumbs.add(new BreadCrumb(searchString, null));
-            }
             return new ListingPageDetails(getListingPageDetails(styleVariants), breadCrumbs, styleVariants.getTotalPages(),
                     styleVariants.getNumber() + 1, styleVariants.getTotalElements(), styleVariants.getNumberOfElements(),
                     styleVariants.hasNext());
         }
-        return new ListingPageDetails();
+
+
+        return new ListingPageDetails(null,breadCrumbs,0,0,0,0,false);
     }
 
     private List<ProductListingResponse> getListingPageDetails(Page<ProductStyleVariant> styleVariants) {
@@ -165,7 +168,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     }
 
     @Override
-    public ProductFilters getProductFilters(String searchString, ProductFilterReq productFilterReq, Map<String, Set> latestAppliedFilter) {
+    public ProductFilters getProductFilters(String searchString, ProductFilterReq productFilterReq) {
         String[] searchString2;
         searchString = searchString.replaceAll("-", " ");
         if (productFilterReq.getMaxPrice() == null) {
@@ -181,45 +184,46 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 productFilterReq.getColours(), productFilterReq.getSizes(), productFilterReq.getDiscountPercentage(),
                 productFilterReq.getMinPrice(), productFilterReq.getMaxPrice());
         ProductFilters productFilters = modelMapper.map(filters, ProductFilters.class);
-        Gson g = new Gson();
-        productFilters.setColours(g.fromJson(filters.get("colours").toString(), new TypeToken<Set<Colours>>() {
+        Gson gson = new Gson();
+        productFilters.setColours(gson.fromJson(filters.get("colours").toString(), new TypeToken<Set<Colours>>() {
         }.getType()));
-        productFilters.setDiscountPercentages(g.fromJson(filters.get("discount").toString(), new TypeToken<Set<DiscountPercentage>>() {
+        productFilters.setDiscountPercentages(gson.fromJson(filters.get("discount").toString(), new TypeToken<Set<DiscountPercentage>>() {
         }.getType()));
-        if (latestAppliedFilter != null) {
-            Set<String> s = latestAppliedFilter.keySet();
-            Set value = latestAppliedFilter.get(s.stream().findFirst().get());
-            if (value != null) {
-                switch (s.stream().findFirst().get()) {
 
-                    case "masterCategories":
-                        productFilters.setMasterCategories(value);
-                        break;
-                    case "categories":
-                        productFilters.setCategories(value);
-                        break;
-                    case "subCategories":
-                        productFilters.setSubCategories(value);
-                        break;
-                    case "brands":
-                        productFilters.setBrands(value);
-                        break;
-                    case "gender":
-                        productFilters.setGender(value);
-                        break;
-                    case "colours":
-                        productFilters.setColours(value);
-                        break;
-                    case "sizes":
-                        productFilters.setSizes(value);
-                        break;
-                    case "discountPercentages":
-                        productFilters.setDiscountPercentages(value);
-                        break;
-                }
-
-            }
-        }
+//        if (latestAppliedFilter != null && !latestAppliedFilter.isEmpty()) {
+//            Set<String> s = latestAppliedFilter.keySet();
+//            Set value = latestAppliedFilter.get(s.stream().findFirst().get());
+//            if (value != null) {
+//                switch (s.stream().findFirst().get()) {
+//
+//                    case "masterCategories":
+//                        productFilters.setMasterCategories(value);
+//                        break;
+//                    case "categories":
+//                        productFilters.setCategories(value);
+//                        break;
+//                    case "subCategories":
+//                        productFilters.setSubCategories(value);
+//                        break;
+//                    case "brands":
+//                        productFilters.setBrands(value);
+//                        break;
+//                    case "gender":
+//                        productFilters.setGender(value);
+//                        break;
+//                    case "colours":
+//                        productFilters.setColours(value);
+//                        break;
+//                    case "sizes":
+//                        productFilters.setSizes(value);
+//                        break;
+//                    case "discountPercentages":
+//                        productFilters.setDiscountPercentages(value);
+//                        break;
+//                }
+//
+//            }
+//        }
         return productFilters;
     }
 
