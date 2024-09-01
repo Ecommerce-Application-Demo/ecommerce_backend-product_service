@@ -24,6 +24,6 @@ public class SkuResponse {
     private String discountPercentageText;
     private BigDecimal finalPrice;
     private String defaultImage;
-    private Integer quantity;
+    private Integer availableQuantity;
     private boolean isInStock;
 }

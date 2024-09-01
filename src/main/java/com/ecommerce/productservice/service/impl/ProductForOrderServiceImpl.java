@@ -44,7 +44,7 @@ public class ProductForOrderServiceImpl implements ProductsForOrderService {
                 skuResponse.setDiscountPercentageText(p.getPsv_id().getDiscountPercentageText());
                 skuResponse.setFinalPrice(p.getPsv_id().getFinalPrice());
                 skuResponse.setDefaultImage(p.getPsv_id().getImages().getImage1());
-                skuResponse.setQuantity(p.getQuantity());
+                skuResponse.setAvailableQuantity(p.getQuantity());
                 if(p.getQuantity()>0){
                     skuResponse.setInStock(true);
                 }
